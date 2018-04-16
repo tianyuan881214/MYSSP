@@ -1,0 +1,341 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+        "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+
+
+<mapper namespace="com.yada.ssp.dao.MerchantBaseFhDao">
+
+    <resultMap id="MerchantBaseFh" type="com.yada.ssp.model.MerchantBaseFh">
+        <result property="merchantId" column="MERCHANT_ID"/>
+        <result property="mcc" column="MCC"/>
+        <result property="merchantCname" column="MERCHANT_CNAME"/>
+        <result property="merchantEname" column="MERCHANT_ENAME"/>
+        <result property="abbrCname" column="ABBR_CNAME"/>
+        <result property="abbrEname" column="ABBR_ENAME"/>
+        <result property="addressChn" column="ADDRESS_CHN"/>
+        <result property="addressEng" column="ADDRESS_ENG"/>
+        <result property="cityCname" column="CITY_CNAME"/>
+        <result property="cityEname" column="CITY_ENAME"/>
+        <result property="telephone" column="TELEPHONE"/>
+        <result property="postCode" column="POST_CODE"/>
+        <result property="fax" column="FAX"/>
+        <result property="manager" column="MANAGER"/>
+        <result property="settleMerchId" column="SETTLE_MERCH_ID"/>
+        <result property="signBankId" column="SIGN_BANK_ID"/>
+        <result property="signHostId" column="SIGN_HOST_ID"/>
+        <result property="zbank" column="ZBANK"/>
+        <result property="ccyType" column="CCY_TYPE"/>
+        <result property="lockMode" column="LOCK_MODE"/>
+        <result property="signDate" column="SIGN_DATE"/>
+        <result property="merchantStat" column="MERCHANT_STAT"/>
+        <result property="settleMode" column="SETTLE_MODE"/>
+        <result property="updateOper" column="UPDATE_OPER"/>
+        <result property="updateDate" column="UPDATE_DATE"/>
+        <result property="updateTime" column="UPDATE_TIME"/>
+        <result property="orgId" column="ORG_ID"/>
+        <result property="pOrgId" column="P_ORG_ID"/>
+        <result property="detail" column="Detail"/>
+        <result property="accountNo" column="ACCOUNT_NO"/>
+        <result property="sub_mch_id" column="SUB_MCH_ID"/>
+        <result property="sendStatus" column="SEND_STATUS"/>
+        <result property="scanType" column="SCAN_TYPE"/>
+        <result property="accountType" column="ACCOUNT_TYPE"/>
+        <result property="state" column="STATE"/>
+        <result property="belongOrgId" column="BELONG_ORG_ID"/>
+
+        <association property="enterAiliMerchant" javaType="com.yada.ssp.model.EnterAiliMerchant">
+            <result property="issh" column="issh"/>
+            <result property="external_id" column="ALIPAY_MERCHANT_ID"/>
+            <result property="category_id" column="CATEGORY_ID"/>
+            <result property="source" column="SOURCE"/>
+            <result property="sub_merchant_id" column="SUB_MERCHANT_ID"/>
+            <result property="up_select" column="UP_SELECT"/>
+        </association>
+        <collection property="merchantBusinesses" ofType="com.yada.ssp.model.MerchantBusiness">
+            <id property="paymerchantBases" column="MERCHAND_ID"/>
+            <result property="businessBase" column="BUSINESS_ID"/>
+            <result property="feeTable" column="FEE_ID"/>
+        </collection>
+    </resultMap>
+
+    <resultMap id="BusinessBase" type="com.yada.ssp.model.BusinessBase">
+        <result property="businessId" column="BUSINESS_ID"/>
+        <result property="businessName" column="BUSINESS_NAME"/>
+        <result property="businessSm" column="BUSINESS_INSTRUCTION"/>
+    </resultMap>
+
+    <resultMap id="FeeTable" type="com.yada.ssp.model.FeeTable">
+        <id property="feeId" column="FEE_ID"/>
+        <result property="fee" column="FEE"/>
+        <result property="feeSm" column="FEE_INSTRUCTION"/>
+    </resultMap>
+    <!--category表-->
+    <resultMap id="Category"  type="com.yada.ssp.model.Category">
+        <result property="id" column="ID"/>
+        <result property="detail" column="Detail"/>
+    </resultMap>
+
+    <resultMap id="WebchantMerchantBase" type="com.yada.ssp.model.WebchantMerchantBase">
+        <result property="merchant_id" column="MERCHANT_ID"/>
+        <result property="merchant_shortname" column="MERCHANT_SHORTNAME"/>
+        <result property="service_phonr" column="SERVICE_PHONR"/>
+        <result property="channel_id" column="CHANNEL_ID"/>
+        <result property="business" column="BUSINESS"/>
+        <result property="merchant_remark" column="MERCHANT_REMARK"/>
+        <result property="sub_mch_id" column="SUB_MCH_ID"/>
+    </resultMap>
+
+    <sql id="MerchantBaseFh_columns">
+        T.MERCHANT_ID,
+        T.MCC,
+        T.MERCHANT_CNAME,
+        T.MERCHANT_ENAME,
+        T.ABBR_CNAME,
+        T.ABBR_ENAME,
+        T.ADDRESS_CHN,
+        T.ADDRESS_ENG,
+        T.CITY_CNAME,
+        T.CITY_ENAME,
+        T.TELEPHONE,
+        T.POST_CODE,
+        T.FAX,
+        T.MANAGER,
+        T.SETTLE_MERCH_ID,
+        T.SIGN_BANK_ID,
+        T.SIGN_HOST_ID,
+        T.ZBANK,
+        T.CCY_TYPE,
+        T.LOCK_MODE,
+        T.SIGN_DATE,
+        T.MERCHANT_STAT,
+        T.SETTLE_MODE,
+        T.UPDATE_OPER,
+        T.UPDATE_DATE,
+        T.UPDATE_TIME,
+        T.SEND_STATUS,
+        T.SCAN_TYPE,
+        T.ACCOUNT_TYPE,
+        T.STATE,
+        T.BELONG_ORG_ID
+    </sql>
+
+    <sql id="FeeTable_columns">
+        F.FEE_ID,F.FEE,F.FEE_INSTRUCTION
+    </sql>
+
+    <sql id="EnterAiliMerchant_columns">
+        substr(E.SUB_MERCHANT_ID, 0, 2) as isfh ,E.MERCHANT_ID AS ALIPAY_MERCHANT_ID,E.CATEGORY_ID,E.SOURCE,E.SUB_MERCHANT_ID,E.UP_SELECT
+    </sql>
+
+    <sql id="BusinessBase_columns">
+        B.BUSINESS_ID,B.BUSINESS_NAME,B.BUSINESS_INSTRUCTION
+    </sql>
+
+    <sql id="MerchantBusiness_columns">
+        M.MERCHAND_ID,
+        M.BUSINESS_ID,
+        M.FEE_ID
+    </sql>
+
+    <sql id="MerchantBaseFh_findPage_where">
+        <where>
+            T.STATE='1'
+            <if test="merchantId != null and merchantId !=''">
+                AND T.MERCHANT_ID = #{merchantId}
+            </if>
+            <if test="merchantCname != null and merchantCname !=''">
+                AND T.MERCHANT_CNAME like '%'||#{merchantCname}||'%'
+            </if>
+        </where>
+
+    </sql>
+
+    <insert id="MerchantBaseFh_insert">
+        <selectKey resultType="java.lang.String" order="BEFORE" keyProperty="key-id">
+            SELECT SEQname.nextval AS ID FROM DUAL
+        </selectKey>
+        INSERT INTO MERCHANT_BASE (
+        MERCHANT_ID ,
+        MCC ,
+        MERCHANT_CNAME ,
+        MERCHANT_ENAME ,
+        ABBR_CNAME ,
+        ABBR_ENAME ,
+        ADDRESS_CHN ,
+        ADDRESS_ENG ,
+        CITY_CNAME ,
+        CITY_ENAME ,
+        TELEPHONE ,
+        POST_CODE ,
+        FAX ,
+        MANAGER ,
+        SETTLE_MERCH_ID ,
+        SIGN_BANK_ID ,
+        SIGN_HOST_ID ,
+        ZBANK ,
+        CCY_TYPE ,
+        LOCK_MODE ,
+        SIGN_DATE ,
+        MERCHANT_STAT ,
+        SETTLE_MODE ,
+        UPDATE_OPER ,
+        UPDATE_DATE ,
+        UPDATE_TIME,
+        SEND_STATUS,
+        SCAN_TYPE,
+        ACCOUNT_TYPE,
+        STATE,
+        BELONG_ORG_ID
+        ) VALUES (
+        #{merchantId jdbcType=VARCHAR} ,
+        #{mcc jdbcType=VARCHAR} ,
+        #{merchantCname jdbcType=VARCHAR} ,
+        #{merchantEname jdbcType=VARCHAR} ,
+        #{abbrCname jdbcType=VARCHAR} ,
+        #{abbrEname jdbcType=VARCHAR} ,
+        #{addressChn jdbcType=VARCHAR} ,
+        #{addressEng jdbcType=VARCHAR} ,
+        #{cityCname jdbcType=VARCHAR} ,
+        #{cityEname jdbcType=VARCHAR} ,
+        #{telephone jdbcType=VARCHAR} ,
+        #{postCode jdbcType=VARCHAR} ,
+        #{fax jdbcType=VARCHAR} ,
+        #{manager jdbcType=VARCHAR} ,
+        #{settleMerchId jdbcType=VARCHAR} ,
+        #{signBankId jdbcType=VARCHAR} ,
+        #{signHostId jdbcType=VARCHAR} ,
+        #{zbank jdbcType=VARCHAR} ,
+        #{ccyType jdbcType=VARCHAR} ,
+        #{lockMode jdbcType=VARCHAR} ,
+        #{signDate jdbcType=VARCHAR} ,
+        #{merchantStat jdbcType=VARCHAR} ,
+        #{settleMode jdbcType=VARCHAR} ,
+        #{updateOper jdbcType=VARCHAR} ,
+        #{updateDate jdbcType=VARCHAR} ,
+        #{updateTime jdbcType=VARCHAR},
+        #{sendStatus jdbcType=VARCHAR},
+        #{scanType jdbcType=VARCHAR},
+        #{accountType jdbcType=VARCHAR},
+        #{state jdbcType=VARCHAR},
+        #{belongOrgId jdbcType=VARCHAR}
+        )
+    </insert>
+
+    <update id="MerchantBaseFh_update" parameterType="com.yada.ssp.model.MerchantBaseFh">
+        <![CDATA[
+        UPDATE MERCHANT_BASE SET
+	        MCC = #{mcc jdbcType=VARCHAR} ,
+	        MERCHANT_CNAME = #{merchantCname jdbcType=VARCHAR} ,
+	        MERCHANT_ENAME = #{merchantEname jdbcType=VARCHAR} ,
+	        ABBR_CNAME = #{abbrCname jdbcType=VARCHAR} ,
+	        ABBR_ENAME = #{abbrEname jdbcType=VARCHAR} ,
+	        ADDRESS_CHN = #{addressChn jdbcType=VARCHAR} ,
+	        ADDRESS_ENG = #{addressEng jdbcType=VARCHAR} ,
+	        CITY_CNAME = #{cityCname jdbcType=VARCHAR} ,
+	        CITY_ENAME = #{cityEname jdbcType=VARCHAR} ,
+	        TELEPHONE = #{telephone jdbcType=VARCHAR} ,
+	        POST_CODE = #{postCode jdbcType=VARCHAR} ,
+	        FAX = #{fax jdbcType=VARCHAR} ,
+	        MANAGER = #{manager jdbcType=VARCHAR} ,
+	        SETTLE_MERCH_ID = #{settleMerchId jdbcType=VARCHAR} ,
+	        SIGN_BANK_ID = #{signBankId jdbcType=VARCHAR} ,
+	        SIGN_HOST_ID = #{signHostId jdbcType=VARCHAR} ,
+	        ZBANK = #{zbank jdbcType=VARCHAR} ,
+	        CCY_TYPE = #{ccyType jdbcType=VARCHAR} ,
+	        LOCK_MODE = #{lockMode jdbcType=VARCHAR} ,
+	        SIGN_DATE = #{signDate jdbcType=VARCHAR} ,
+	        MERCHANT_STAT = #{merchantStat jdbcType=VARCHAR} ,
+	        SETTLE_MODE = #{settleMode jdbcType=VARCHAR} ,
+	        UPDATE_OPER = #{updateOper jdbcType=VARCHAR} ,
+	        UPDATE_DATE = #{updateDate jdbcType=VARCHAR} ,
+	        UPDATE_TIME = #{updateTime jdbcType=VARCHAR},
+	        SEND_STATUS = #{sendStatus jdbcType=VARCHAR},
+	        SCAN_TYPE   = #{scanType jdbcType=VARCHAR},
+	        ACCOUNT_TYPE   = #{accountType jdbcType=VARCHAR},
+	        STATE   = #{state jdbcType=VARCHAR},
+	        BELONG_ORG_ID   = #{belongOrgId jdbcType=VARCHAR}
+        WHERE
+	        MERCHANT_ID = #{merchantId}
+        ]]>
+    </update>
+
+    <update id="MerchantBaseFh_updateSendStatus" parameterType="com.yada.ssp.model.MerchantBaseFh">
+
+        UPDATE MERCHANT_BASE SET
+	        STATE = #{state}
+        WHERE
+	        MERCHANT_ID = #{merchantId}
+
+    </update>
+
+    <delete id="MerchantBaseFh_delete">
+        <![CDATA[
+        DELETE FROM MERCHANT_BASE WHERE
+        MERCHANT_ID = #{id}
+        ]]>
+    </delete>
+
+
+
+    <select id="MerchantBaseFh_findCountByWhere" resultType="int">
+        SELECT count(*) FROM
+        MERCHANT_BASE T
+        LEFT   JOIN MERCHANT_BUSINESS M ON M.MERCHAND_ID=T.MERCHANT_ID
+        LEFT  JOIN BUSINESS_BASE B ON M.BUSINESS_ID=B.BUSINESS_ID
+        LEFT  JOIN FEE_LS F ON M.FEE_ID=F.FEE_ID
+        LEFT  JOIN ALIPAY_MERCHANT_BASE E ON T.MERCHANT_ID=E.MERCHANT_ID
+        LEFT JOIN MERCHANT_ADD_INFO A ON T.MERCHANT_ID=A.MERCHANT_ID
+        LEFT JOIN CATEGORY S ON E.CATEGORY_ID = S.ID
+        LEFT  JOIN T_B_ORG O ON T.ZBANK=O.ORG_ID
+        LEFT  JOIN WEBCHANT_MERCHANT_BASE W ON T.MERCHANT_ID=W.MERCHANT_ID
+        <include refid="MerchantBaseFh_findPage_where"/>
+    </select>
+
+
+    <select id="MerchantBaseFh_findListByWhere" resultMap="MerchantBaseFh">
+        SELECT
+        <include refid="MerchantBaseFh_columns"/>,
+        <include refid="BusinessBase_columns"/>,
+        <include refid="FeeTable_columns"/>,
+        <include refid="EnterAiliMerchant_columns"/>,
+        A.ACCOUNT_NO AS ACCOUNT_NO,
+        s.ID,s.Detail,W.SUB_MCH_ID
+        FROM MERCHANT_BASE T
+        LEFT JOIN ALIPAY_MERCHANT_BASE E ON T.MERCHANT_ID=E.MERCHANT_ID
+        LEFT JOIN WEBCHANT_MERCHANT_BASE W ON T.MERCHANT_ID=W.MERCHANT_ID
+        LEFT JOIN MERCHANT_ADD_INFO A ON T.MERCHANT_ID=A.MERCHANT_ID
+        LEFT JOIN MERCHANT_BUSINESS M ON M.MERCHAND_ID=T.MERCHANT_ID
+        LEFT JOIN BUSINESS_BASE B ON M.BUSINESS_ID=B.BUSINESS_ID
+        LEFT JOIN FEE_LS F ON M.FEE_ID=F.FEE_ID
+        LEFT JOIN CATEGORY S ON E.CATEGORY_ID = S.ID
+        LEFT JOIN T_B_ORG O ON T.ZBANK=O.ORG_ID
+        <include refid="MerchantBaseFh_findPage_where"/>
+     </select>
+
+    <select id="MerchantBaseFh_findByZbank" resultMap="MerchantBaseFh">
+        SELECT
+        <include refid="MerchantBaseFh_columns"/>
+        FROM MERCHANT_BASE T
+        WHERE T.ZBANK=#{zbank}
+    </select>
+    <select id="MerchantBaseFh_getById" resultMap="MerchantBaseFh">
+        SELECT
+        <include refid="MerchantBaseFh_columns" />,
+        s.ID,s.Detail,W.sub_mch_id
+        FROM MERCHANT_BASE T
+        LEFT  JOIN ALIPAY_MERCHANT_BASE E ON T.MERCHANT_ID=E.MERCHANT_ID
+        LEFT  JOIN WEBCHANT_MERCHANT_BASE W ON T.MERCHANT_ID=W.MERCHANT_ID
+        LEFT  JOIN CATEGORY S ON E.CATEGORY_ID = S.ID
+        WHERE
+        T.MERCHANT_ID = #{id}
+    </select>
+
+    <update id="MerchantBaseFh_updates">
+        update MERCHANT_BASE set
+        STATE=#{state}
+        where MERCHANT_ID=#{id}
+    </update>
+
+</mapper>
+

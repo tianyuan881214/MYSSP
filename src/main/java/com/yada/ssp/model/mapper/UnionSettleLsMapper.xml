@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+        "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+
+
+    <mapper namespace="com.yada.ssp.dao.UnionSettleLsDao">
+    <resultMap id="UnionSettleLs" type="com.yada.ssp.model.UnionSettleLs">
+        <result property="orderId" column="ORDER_ID"/>
+        <result property="accType" column="ACC_TYPE"/>
+        <result property="billNo" column="BILL_NO"/>
+        <result property="billType" column="BILL_TYPE"/>
+        <result property="discountAmt" column="DISCOUNT_AMT"/>
+        <result property="interactMode" column="INTERACT_MODE"/>
+        <result property="liquindationAmt" column="LIQUIDATION_AMT"/>
+        <result property="liquidationTime" column="LIQUIDATION_TIME"/>
+        <result property="mercatCode" column="MER_CAT_CODE"/>
+        <result property="merchantFee" column="MERCHANT_FEE"/>
+        <result property="settleementAmt" column="SETTLEMENT_AMT"/>
+        <result property="oldTxnTime" column="OLD_TXN_TIME"/>
+        <result property="queryId" column="QUERY_ID"/>
+        <result property="origQryId" column="ORIG_QRY_ID"/>
+        <result property="termId" column="TERM_ID"/>
+        <result property="othFee" column="oth_fee"/>
+        <result property="myFee" column="MY_FEE"/>
+        <result property="gsFee" column="GS_FEE"/>
+        <result property="amoutFee" column="AMOUNT_FEE"/>
+        <result property="isOthAccount" column="IS_OTH_ACCOUNT"/>
+        <result property="bizType" column="BIZ_TYPE"/>
+        <result property="lsID" column="LS_ID"/>
+        <result property="merchantCname" column="MERCHANT_CNAME"/>
+        <result property="name " column="first_Name"/>
+        <result property="merchantId " column="MERCHANT_ID"/>
+        <result property="orgId" column="org_id"/>
+
+    </resultMap>
+
+    <sql id="UnionSettleLs_columns">
+        ls.order_id, -- 商户订单号
+        ls.acc_type, -- 账号类型
+        ls.bill_no , --账单号码
+        ls.bill_type, --账单类型
+        ls.discount_amt, --优惠金额
+        ls. interact_mode ,--交互方式
+        ls.liquidation_amt ,--清算净额
+        ls.liquidation_time, -- 清算日期
+        ls.mer_cat_code ,--商户类别
+        ls.merchant_fee, -- 商户手续费
+        ls.settlement_amt, -- 结算金额
+        ls.old_txn_time ,  --原始交易日期时间
+        ls.query_id ,--查询流水号
+        ls.orig_qry_id, -- 原交易查询流水号
+        ls.term_id , -- 终端号
+        ls.oth_fee , --他行手续费金额
+        ls.my_fee , --本行手续费金额
+        ls.gs_fee , --公司手续费金额
+        ls.amount_fee, -- 总手续费
+        ls.is_oth_account ,--他行标识（0：本行，1他行）
+        ls.biz_type , --业务类型
+        o.name as first_Name,  -- 所属机构
+        org.name as second_Name, -- 二级机构
+        base.merchant_id,   -- 商户号
+        mb.MERCHANT_CNAME，  -- 商户名称
+        o.org_id  -- 机构id
+    </sql>
+
+    <sql id="UnionSettleLs_findPage_where">
+        <where>
+            <!--商户订单号-->
+            <if test="merchantId != null and merchantId !=''">
+                AND base.merchant_id=#{merchantId}
+            </if>
+            <!--时间-->
+            <if test="tranDateTimeBegin != null and tranDateTimeBegin !=''">
+                AND ls.liquidation_time &gt;= #{tranDateTimeBegin}
+            </if>
+            <if test="tranDateTimeEnd != null and tranDateTimeEnd !=''">
+                AND ls.liquidation_time &lt;= #{tranDateTimeEnd}
+            </if>
+            <!--商户名称-->
+            <if test="merchantCname != null and merchantCname !=''">
+                AND TMP.MERCHANT_CNAME  like  '%'||#{merchantCname}||'%'
+            </if>
+        </where>
+    </sql>
+
+    <select id="UnionSettleLs_findCountByWhere" resultType="int">
+        select
+          count(0)
+        from union_settle_ls ls
+        left join UNION_MERCHANT_BASE base  on ls.sub_mer_id  = base.union_sub_mch_id
+        left join MERCHANT_BASE mb   on mb.merchant_id  = base.merchant_id
+        left join T_B_ORG o   on mb.zbank = o.org_id
+        left join t_b_org org on  mb.belong_org_id=org.bank_no
+        AND o.ORG_ID in (select o.org_id from t_b_org o start with o.org_id=#{orgId} connect by o.p_org_id=prior o.org_id)
+        <include refid="UnionSettleLs_findPage_where"/>
+    </select>
+
+    <select id="UnionSettleLs_findListByWhere" resultMap="UnionSettleLs">
+        select
+        <include refid="UnionSettleLs_columns"/>
+        from union_settle_ls ls
+        left join UNION_MERCHANT_BASE base  on ls.sub_mer_id  = base.union_sub_mch_id
+        left join MERCHANT_BASE mb   on mb.merchant_id  = base.merchant_id
+        left join T_B_ORG o   on mb.zbank = o.org_id
+        left join t_b_org org on  mb.belong_org_id=org.bank_no
+        AND o.ORG_ID in (select o.org_id from t_b_org o start with o.org_id=#{orgId} connect by o.p_org_id=prior o.org_id)
+        <include refid="UnionSettleLs_findPage_where"/>
+    </select>
+
+</mapper>
+

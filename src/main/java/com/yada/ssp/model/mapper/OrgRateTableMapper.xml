@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+		PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+		"http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+<mapper namespace="com.yada.ssp.dao.OrgRateTableDao">
+	<resultMap id="OrgRateTable" type="com.yada.ssp.model.OrgRateTable">
+		<id property="orgId" column="ORG_ID" />
+		<result property="alipayRate" column="ALIPAY_RATE" />
+		<result property="wechatRate" column="WECHAT_RATE" />
+		<result property="unionRate" column="UNION_RATE" />
+		<result property="accountNo" column="ACCOUNT_NO" />
+		<result property="accountName" column="ACCOUNT_NAME" />
+		<result property="remark" column="REMARK" />
+	</resultMap>
+
+	<sql id="OrgRateTable_columns">
+		T.ORG_ID,
+		T.ALIPAY_RATE,
+		T.WECHAT_RATE,
+		T.UNION_RATE,
+		T.ACCOUNT_NO,
+		T.REMARK,
+		T.ACCOUNT_NAME
+	</sql>
+
+	<insert id="OrgRateTable_insert">
+		INSERT INTO T_P_ORG_RATE (
+		ORG_ID,
+		 ALIPAY_RATE,
+		 WECHAT_RATE,
+		UNION_RATE,
+		ACCOUNT_NO,
+		REMARK,
+		ACCOUNT_NAME
+		) VALUES (
+		 #{orgId,jdbcType=VARCHAR},
+		 #{alipayRate,jdbcType=VARCHAR},
+		 #{wechatRate,jdbcType=VARCHAR},
+		 #{unionRate,jdbcType=VARCHAR},
+		 #{accountNo,jdbcType=VARCHAR},
+		 #{remark,jdbcType=VARCHAR},
+		  #{accountName,jdbcType=VARCHAR}
+		)
+	</insert>
+
+	<update id="OrgRateTable_update" parameterType="com.yada.ssp.model.OrgRateTable">
+       update
+		T_P_ORG_RATE set
+		ALIPAY_RATE=#{alipayRate,jdbcType=VARCHAR},
+		WECHAT_RATE=#{wechatRate,jdbcType=VARCHAR},
+		UNION_RATE=#{unionRate,jdbcType=VARCHAR},
+		ACCOUNT_NO=#{accountNo,jdbcType=VARCHAR},
+		REMARK=#{remark,jdbcType=VARCHAR},
+		ACCOUNT_NAME=#{accountName,jdbcType=VARCHAR}
+		where
+		ORG_ID=#{orgId,jdbcType=VARCHAR}
+	</update>
+
+	<delete id="OrgRateTable_delete">
+		<![CDATA[
+        DELETE FROM T_P_ORG_RATE WHERE
+        ORG_ID = #{orgId}
+        ]]>
+	</delete>
+
+	<sql id="OrgRateTable_findPage_where">
+
+		<where>
+			<if test="orgId != null and orgId !=''">
+				AND T.ORG_ID=#{orgId}
+			</if>
+			<if test="wechatRate != null and wechatRate !=''">
+				AND T.WECHAT_RATE=#{wechatRate}
+			</if>
+			<if test="unionRate != null and unionRate !=''">
+				AND T.UNION_RATE=#{unionRate}
+			</if>
+			<if test="accountNo != null and accountNo !=''">
+				AND T.ACCOUNT_NO=#{accountNo}
+			</if>
+			<if test="alipayRate != null and alipayRate !=''">
+				AND T.ALIPAY_RATE=#{alipayRate}
+			</if>
+		</where>
+	</sql>
+
+	<select id="OrgRateTable_findCountByWhere" resultType="int">
+		SELECT count(*) FROM T_P_ORG_RATE T
+		<include refid="OrgRateTable_findPage_where" />
+	</select>
+
+	<select id="OrgRateTable_findListByWhere" resultMap="OrgRateTable">
+		SELECT
+		<include refid="OrgRateTable_columns" />
+		FROM T_P_ORG_RATE T
+		<include refid="OrgRateTable_findPage_where" />
+		ORDER BY T.ORG_ID DESC
+	</select>
+
+	<select id="OrgRateTable_getById" resultMap="OrgRateTable">
+		SELECT
+		<include refid="OrgRateTable_columns"/>
+		FROM T_P_ORG_RATE T
+		WHERE T.ORG_ID = #{orgId}
+	</select>
+
+</mapper>
+

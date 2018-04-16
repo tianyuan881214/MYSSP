@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+"http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+
+<mapper namespace="com.yada.ssp.dao.GdRcfLsDao">
+
+	<resultMap id="GdRcfLs" type="com.yada.ssp.model.GdRcfLs">
+		<result property="tranType" column="TRAN_TYPE" />
+		<result property="systemCode" column="SYSTEM_CODE" />
+		<result property="fuctionCode" column="FUCTION_CODE" />
+		<result property="traceNo" column="TRACE_NO" />
+		<result property="cardNo" column="CARD_NO" />
+		<result property="smartCard" column="SMART_CARD" />
+		<result property="amount" column="AMOUNT" />
+		<result property="sysDate" column="SYS_DATE" />
+		<result property="sysTime" column="SYS_TIME" />
+		<result property="respCode" column="RESP_CODE" />
+		<result property="respMsg" column="RESP_MSG" />
+		<result property="cspRespCode" column="CSP_RESP_CODE" />
+		<result property="cspRespMsg" column="CSP_RESP_MSG" />
+	</resultMap>
+
+	<sql id="GdRcfLs_columns">
+		T.TRAN_TYPE ,
+		T.SYSTEM_CODE ,
+		T.FUCTION_CODE ,
+		T.TRACE_NO ,
+		T.CARD_NO ,
+		T.SMART_CARD ,
+		T.AMOUNT ,
+		T.SYS_DATE ,
+		T.SYS_TIME ,
+		T.RESP_CODE ,
+		T.RESP_MSG ,
+		T.CSP_RESP_CODE ,
+		T.CSP_RESP_MSG 
+	</sql>
+
+	<insert id="GdRcfLs_insert" parameterType="com.yada.ssp.model.GdRcfLs">
+		<selectKey resultType="java.lang.String" order="BEFORE"
+			keyProperty="id">
+			SELECT T_SEQ_GD_RCF_LS.nextval AS ID FROM DUAL
+		</selectKey>
+    <![CDATA[
+		insert into GD_RCF_LS
+		 (TRAN_TYPE,SYSTEM_CODE,FUCTION_CODE,TRACE_NO,CARD_NO,SMART_CARD,AMOUNT,SYS_DATE,SYS_TIME,RESP_CODE,RESP_MSG,CSP_RESP_CODE,CSP_RESP_MSG)  
+		   values 
+		 (#{tranType},#{systemCode},#{fuctionCode},#{traceNo},#{cardNo},#{smartCard},#{amount},#{sysDate},#{sysTime},#{respCode},#{respMsg},#{cspRespCode},#{cspRespMsg})
+		]]>
+	</insert>
+
+	<update id="GdRcfLs_update" parameterType="com.yada.ssp.model.GdRcfLs">
+		update GD_RCF_LS set 
+			   SYSTEM_CODE=#{systemCode},
+			   FUCTION_CODE=#{fuctionCode},
+			   TRACE_NO=#{traceNo},
+			   CARD_NO=#{cardNo},
+			   SMART_CARD=#{smartCard},
+			   AMOUNT=#{amount},
+			   SYS_DATE=#{sysDate},
+			   SYS_TIME=#{sysTime},
+			   RESP_CODE=#{respCode},
+			   RESP_MSG=#{respMsg},
+			   CSP_RESP_CODE=#{cspRespCode},
+			   CSP_RESP_MSG=#{cspRespMsg}
+		where TRAN_TYPE=#{tranType}
+	</update>
+
+	<delete id="GdRcfLs_delete">
+		delete from GD_RCF_LS where TRAN_TYPE=#{tranType}
+	</delete>
+
+	<select id="GdRcfLs_getById" resultMap="GdRcfLs">
+		SELECT
+		<include refid="GdRcfLs_columns" />
+		FROM GD_RCF_LS T
+		WHERE T.TRAN_TYPE = #{tranType}
+	</select>
+
+	<sql id="GdRcfLs_findPage_where">
+		<where>
+			<if test="tranType != null and tranType !=''">
+				AND T.TRAN_TYPE = #{tranType}
+			</if>
+			<if test="systemCode != null and systemCode !=''">
+				AND T.SYSTEM_CODE = #{systemCode}
+			</if>
+			<if test="fuctionCode != null and fuctionCode !=''">
+				AND T.FUCTION_CODE = #{fuctionCode}
+			</if>
+			<if test="traceNo != null and traceNo !=''">
+				AND T.TRACE_NO = #{traceNo}
+			</if>
+			<if test="cardNo != null and cardNo !=''">
+				AND T.CARD_NO = #{cardNo}
+			</if>
+			<if test="smartCard != null and smartCard !=''">
+				AND T.SMART_CARD = #{smartCard}
+			</if>
+			<if test="amount != null and amount !=''">
+				AND T.AMOUNT = #{amount}
+			</if>
+			<if test="sysDate != null and sysDate !=''">
+				AND T.SYS_DATE = #{sysDate}
+			</if>
+			<if test="sysTime != null and sysTime !=''">
+				AND T.SYS_TIME = #{sysTime}
+			</if>
+			<if test="respCode != null and respCode !=''">
+				AND T.RESP_CODE = #{respCode}
+			</if>
+			<if test="respMsg != null and respMsg !=''">
+				AND T.RESP_MSG = #{respMsg}
+			</if>
+			<if test="cspRespCode != null and cspRespCode !=''">
+				AND T.CSP_RESP_CODE = #{cspRespCode}
+			</if>
+			<if test="cspRespMsg != null and cspRespMsg !=''">
+				AND T.CSP_RESP_MSG = #{cspRespMsg}
+			</if>
+		</where>
+	</sql>
+
+	<select id="GdRcfLs_findCountByWhere" resultType="int">
+		SELECT count(*) FROM GD_RCF_LS T
+		<include refid="GdRcfLs_findPage_where" />
+	</select>
+
+
+	<select id="GdRcfLs_findListByWhere" resultMap="GdRcfLs">
+		SELECT
+		<include refid="GdRcfLs_columns" />
+		FROM GD_RCF_LS T
+		<include refid="GdRcfLs_findPage_where" />
+		ORDER BY T.TRAN_TYPE DESC
+	</select>
+</mapper>
+

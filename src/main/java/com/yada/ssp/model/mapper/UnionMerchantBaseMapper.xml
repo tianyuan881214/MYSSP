@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+        "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+
+
+<mapper namespace="com.yada.ssp.dao.UnionMerchantBaseDao">
+
+    <resultMap id="UnionMerchantBase" type="com.yada.ssp.model.UnionMerchantBase">
+        <result property="merchantId" column="MERCHANT_ID"/>
+        <result property="unionName" column="UNION_NAME"/>
+        <result property="merchantShortname" column="MERCHANT_SHORTNAME"/>
+        <result property="servicePhonr" column="SERVICE_PHONR"/>
+        <result property="contact" column="CONTACT"/>
+        <result property="contactPhone" column="CONTANT_PHONE"/>
+        <result property="contactEmail" column="CONTACT_EAMIL"/>
+        <result property="unionRemark" column="UNION_REMARK"/>
+        <result property="unionSubmchid" column="UNION_SUB_MCH_ID"/>
+    </resultMap>
+
+    <sql id="UnionMerchantBase_columns">
+          T.MERCHANT_ID,
+          T.UNION_NAME,
+          T.MERCHANT_SHORTNAME,
+          T.SERVICE_PHONR,
+          T.CONTACT,
+          T.CONTACT_PHONE,
+          T.CONTACT_EMAIL,
+          T.UNION_REMARK,
+          T.UNION_SUB_MCH_ID
+    </sql>
+
+    <!--添加银联信息-->
+    <insert id="UnionMerchantBase_insert">
+        INSERT INTO union_merchant_base (
+        MERCHANT_ID,
+        UNION_NAME,
+        MERCHANT_SHORTNAME,
+        SERVICE_PHONR,
+        CONTACT,
+        CONTACT_PHONE,
+        CONTACT_EMAIL,
+        UNION_REMARK,
+        UNION_SUB_MCH_ID
+        ) VALUES (
+        #{merchantId jdbcType=VARCHAR} ,
+        #{unionName jdbcType=VARCHAR} ,
+        #{merchantShortname jdbcType=VARCHAR} ,
+        #{servicePhonr jdbcType=VARCHAR} ,
+        #{contact jdbcType=VARCHAR} ,
+        #{contactPhone jdbcType=VARCHAR} ,
+        #{contactEmail jdbcType=VARCHAR} ,
+        #{unionRemark jdbcType=VARCHAR} ,
+        #{unionSubmchid jdbcType=VARCHAR}
+        )
+    </insert>
+
+    <!--更新银联信息-->
+    <update id="UnionMerchantBase_update">
+        <![CDATA[
+        UPDATE union_merchant_base SET
+        UNION_NAME=#{unionName jdbcType=VARCHAR} ,
+        MERCHANT_SHORTNAME=#{merchantShortname jdbcType=VARCHAR} ,
+        SERVICE_PHONR=#{servicePhonr jdbcType=VARCHAR} ,
+        CONTACT=#{contact jdbcType=VARCHAR},
+        CONTACT_PHONE=#{contactPhone jdbcType=VARCHAR},
+        CONTACT_EMAIL=#{contactEmail jdbcType=VARCHAR},
+        UNION_REMARK=#{unionRemark jdbcType=VARCHAR},
+        UNION_SUB_MCH_ID=#{unionSubmchid jdbcType=VARCHAR}
+        WHERE
+	        MERCHANT_ID = #{merchantId}
+        ]]>
+    </update>
+
+    <!--查询条件-->
+    <sql id="UnionMerchantBase_findPage_where">
+
+        <where>
+            <if test="merchantId != null and merchantId !=''">
+                AND T.MERCHANT_ID = #{merchantId}
+            </if>
+            <if test="unionName != null and unionName !=''">
+                AND T.UNION_NAME like '%'||#{unionName}||'%'
+            </if>
+            <if test="servicePhonr != null and servicePhonr !=''">
+                AND T.SERVICE_PHONR = #{servicePhonr}
+            </if>
+            <if test="contact != null and contact !=''">
+                AND T.CONTACT like '%'||#{contact}||'%'
+            </if>
+            <if test="contactPhone != null and contactPhone !=''">
+                AND T.CONTACT_PHONE = #{contactPhone}
+            </if>
+            <if test="contactEmail != null and contactEmail !=''">
+                AND T.CONTACT_EMAIL = #{contactEmail}
+            </if>
+            <if test="unionSubmchid != null and unionSubmchid !=''">
+                AND T.UNION_SUB_MCH_ID = #{unionSubmchid}
+            </if>
+        </where>
+    </sql>
+    <!--计算总数-->
+    <select id="UnionMerchantBase_findCountByWhere" resultType="int">
+        SELECT count(*) FROM
+        union_merchant_base T
+        <include refid="UnionMerchantBase_findPage_where"/>
+    </select>
+    <!--得到数据集合-->
+    <select id="UnionMerchantBase_findListByWhere" resultMap="UnionMerchantBase">
+        SELECT
+        <include refid="UnionMerchantBase_columns"/>,
+        FROM union_merchant_base T
+        <include refid="UnionMerchantBase_findPage_where"/>
+        order by t.update_date desc,t.update_time desc
+    </select>
+
+</mapper>
+

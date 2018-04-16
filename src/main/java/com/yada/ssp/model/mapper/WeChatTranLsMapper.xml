@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+        "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+
+<mapper namespace="com.yada.ssp.dao.WebChatTranLsDao">
+
+    <resultMap id="WebChatTranLs" type="com.yada.ssp.model.WebChatTranLs">
+        <result property="merchantNo" column="MERCHANT_NO"/>
+        <result property="mchId" column="MCH_ID"/>
+        <result property="outTradeNo" column="OUT_TRADE_NO"/>
+        <result property="merchantCname" column="MERCHANT_CNAME"/>
+        <result property="totalAmount" column="TOTAL_AMOUNT"/>
+        <result property="batchNO" column="BATCH_NO"/>
+        <result property="traceNo" column="TRACE_NO"/>
+        <result property="tranType" column="TRAN_TYPE"/>
+        <result property="state" column="STATE"/>
+        <result property="operatorId" column="OPERATOR_ID"/>
+        <result property="refundFlag" column="REFUND_FLAG"/>
+        <result property="resultCode" column="RESULT_CODE"/>
+        <result property="transactionId" column="TRANSACTION_ID"/>
+        <result property="tranDate" column="tran_date"/>
+        <result property="tranTime" column="tran_time"/>
+        <result property="firstName" column="FIRST_NAME"/>
+        <result property="secondName" column="SECOND_NAME"/>
+    </resultMap>
+
+    <sql id="WebChatTranLs_columns">
+        o.org_id,
+        m.zbank,
+        tmp.mch_id, -- 商户号
+        tmp.merchant_no,
+        tmp.out_trade_no, --商户订单号
+        tmp.total_amount, -- 交易金额
+        tmp.batch_no, -- 终端批次号
+        tmp.tran_date, -- 交易日期
+        tmp.tran_time, --  交易时间
+        tmp.trace_no, -- 终端流水号
+        tmp.trade_type, --交易类型
+        tmp.result_code, -- 业务结果
+        tmp.transaction_id, --微信支付订单号
+        tmp.operator_id, -- 操作员号
+        tmp.refund_flag, -- 退货标识
+        O.NAME             as FIRST_Name, -- 所属机构
+        O.NAME             as SECOND_NAME, -- 二级机构
+        M.STATE, -- 商户状态
+        M.MERCHANT_CNAME -- 商户名称
+    </sql>
+
+    <sql id="WebChatTranLs_findPage_where">
+        <where>
+            <if test="merchantNo != null and merchantNo!=''">
+                AND T.MERCHANT_NO=#{merchantNo}
+            </if>
+            <if test="finishDateTimeBegin != null and finishDateTimeBegin !=''">
+                AND tmp.tran_date &gt;= #{finishDateTimeBegin}
+            </if>
+            <if test="finishDateTimeEnd != null and finishDateTimeEnd !=''">
+                AND tmp.tran_date &lt;= #{finishDateTimeEnd}
+            </if>
+            <if test="outTradeNo != null and outTradeNo !=''">
+                AND tmp.out_trade_no = #{outTradeNo}
+            </if>
+            <if test="merchantCname != null and merchantCname !=''">
+                AND M.MERCHANT_CNAME  like  '%'||#{merchantCname}||'%'
+            </if>
+            <if test="orgId != null and orgId !=''">
+                AND O.ORG_ID like  #{orgId}||'%'
+            </if>
+        </where>
+    </sql>
+
+    <select id="WebChatTranLs_findCountByWhere" resultType="int">
+        select
+        COUNT (0)
+        from (SELECT ls.mch_id,
+        ls.merchant_no,
+        ls.out_trade_no,
+        ls.total_amount,
+        ls.batch_no,
+        ls.tran_date,
+        ls.tran_time,
+        ls.trace_no,
+        ls.trade_type,
+        ls.result_code,
+        ls.transaction_id,
+        ls.operator_id,
+        ls.refund_flag
+        FROM WECHAT_TRAN_LS ls
+        UNION ALL
+        SELECT ols.mch_id,
+        ols.merchant_no,
+        ols.out_trade_no,
+        ols.total_amount,
+        ols.batch_no,
+        ols.tran_date,
+        ols.tran_time,
+        ols.trace_no,
+        ols.trade_type,
+        ols.result_code,
+        ols.transaction_id,
+        ols.operator_id,
+        ols.refund_flag
+        FROM OLD_WECHAT_TRAN_LS ols) tmp
+        left join WEBCHANT_MERCHANT_BASE webBase
+        on tmp.merchant_no = webBase.Sub_Mch_Id
+        left JOIN MERCHANT_BASE M
+        ON webBase.Merchant_Id = M.MERCHANT_ID
+        left JOIN T_B_ORG O
+        ON M.ZBANK = O.ORG_ID
+        left JOIN T_B_ORG org
+        ON m.belong_org_id = org.ORG_ID
+        <include refid="WebChatTranLs_findPage_where"/>
+    </select>
+
+
+    <select id="WebChatTranLs_findListByWhere" resultMap="WebChatTranLs">
+        select
+        <include refid="WebChatTranLs_columns"/>
+        from (SELECT ls.mch_id,
+        ls.merchant_no,
+        ls.out_trade_no,
+        ls.total_amount,
+        ls.batch_no,
+        ls.tran_date,
+        ls.tran_time,
+        ls.trace_no,
+        ls.trade_type,
+        ls.result_code,
+        ls.transaction_id,
+        ls.operator_id,
+        ls.refund_flag
+        FROM WECHAT_TRAN_LS ls
+        UNION ALL
+        SELECT ols.mch_id,
+        ols.merchant_no,
+        ols.out_trade_no,
+        ols.total_amount,
+        ols.batch_no,
+        ols.tran_date,
+        ols.tran_time,
+        ols.trace_no,
+        ols.trade_type,
+        ols.result_code,
+        ols.transaction_id,
+        ols.operator_id,
+        ols.refund_flag
+        FROM OLD_WECHAT_TRAN_LS ols) tmp
+        left join WEBCHANT_MERCHANT_BASE webBase
+        on tmp.merchant_no = webBase.Sub_Mch_Id
+        left JOIN MERCHANT_BASE M
+        ON webBase.Merchant_Id = M.MERCHANT_ID
+        left JOIN T_B_ORG O
+        ON M.ZBANK = O.ORG_ID
+        left JOIN T_B_ORG org
+        ON m.belong_org_id = org.ORG_ID
+        <include refid="WebChatTranLs_findPage_where"/>
+    </select>
+
+</mapper>
+

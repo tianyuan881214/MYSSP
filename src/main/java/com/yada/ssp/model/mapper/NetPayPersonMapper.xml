@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+        "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+
+
+<mapper namespace="com.yada.ssp.dao.NetPayPersonDao">
+
+    <resultMap id="NetPayPerson" type="com.yada.ssp.model.NetPayPerson">
+        <result property="merchant" column="NP_MERCHANT"/>
+        <result property="terminal" column="NP_TERMINAL"/>
+        <result property="userId" column="NP_USERID"/>
+        <result property="pwd" column="NP_PWD"/>
+        <result property="name" column="NP_NAME"/>
+        <result property="phone" column="NP_PHONE"/>
+        <result property="level" column="NP_LEVEL"/>
+    </resultMap>
+
+
+    <sql id="NetPayPerson_columns">
+        T.NP_MERCHANT,T.NP_TERMINAL,T.NP_USERID,T.NP_PWD,T.NP_NAME,T.NP_PHONE,T.NP_LEVEL
+    </sql>
+
+    <insert id="NetPayPerson_insert">
+        INSERT INTO NETPAY_PERSON T(
+            T.NP_MERCHANT,T.NP_TERMINAL,T.NP_USERID,T.NP_PWD,T.NP_NAME,T.NP_PHONE,T.NP_LEVEL
+        ) VALUES (
+            #{merchant,jdbcType=VARCHAR},#{terminal,jdbcType=VARCHAR},#{userId,jdbcType=VARCHAR},#{pwd,jdbcType=VARCHAR},#{name,jdbcType=VARCHAR}
+            ,#{phone,jdbcType=VARCHAR},#{level,jdbcType=VARCHAR}
+        )
+    </insert>
+
+    <update id="NetPayPerson_update" parameterType="com.yada.ssp.model.NetPayPerson">
+        UPDATE NETPAY_PERSON
+        SET
+        NP_TERMINAL=#{terminal,jdbcType=VARCHAR},
+        NP_PWD=#{pwd,jdbcType=VARCHAR},
+        NP_NAME=#{name,jdbcType=VARCHAR},
+        NP_PHONE=#{phone,jdbcType=VARCHAR},
+        NP_LEVEL=#{level,jdbcType=VARCHAR}
+        WHERE NP_MERCHANT=#{merchant,jdbcType=VARCHAR} AND NP_USERID=#{userId,jdbcType=VARCHAR}
+    </update>
+
+    <delete id="NetPayPerson_delete">
+        DELETE FROM NETPAY_PERSON WHERE NP_MERCHANT=#{merchant,jdbcType=VARCHAR} AND NP_USERID=#{userId,jdbcType=VARCHAR}
+    </delete>
+
+    <select id="NetPayPerson_getById" resultMap="NetPayPerson">
+        SELECT
+        <include refid="NetPayPerson_columns"/>
+        FROM NETPAY_PERSON T
+        WHERE
+        T.NP_MERCHANT = #{merchant} AND T.NP_USERID=#{userId}
+    </select>
+
+    <sql id="NetPayPerson_findPage_where">
+
+        <where>
+            <if test="merchant != null and merchant !=''">
+                AND T.NP_MERCHANT = #{merchant}
+            </if>
+            <if test="userId != null and userId !=''">
+                AND T.NP_USERID=#{userId}
+            </if>
+            <if test="terminal != null and terminal !=''">
+                AND T.NP_TERMINAL=#{terminal}
+            </if>
+            <if test="name != null and name !=''">
+                AND T.NP_NAME=#{name}
+            </if>
+        </where>
+    </sql>
+
+    <select id="NetPayPerson_findCountByWhere" resultType="int">
+        SELECT count(*) FROM NETPAY_PERSON T
+        <include refid="NetPayPerson_findPage_where"/>
+    </select>
+
+
+    <select id="NetPayPerson_findListByWhere" resultMap="NetPayPerson">
+        SELECT
+        <include refid="NetPayPerson_columns"/>
+        FROM NETPAY_PERSON T
+        <include refid="NetPayPerson_findPage_where"/>
+    </select>
+
+</mapper>
+

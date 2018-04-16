@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+"http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+
+<mapper namespace="com.yada.ssp.dao.BusinessBaseDao">
+
+	<resultMap id="BusinessBase" type="com.yada.ssp.model.BusinessBase">
+		<result property="businessId" column="BUSINESS_ID"/>
+		<result property="businessName" column="BUSINESS_NAME" />
+		<result property="businessSm" column="BUSINESS_INSTRUCTION" />
+		<collection property="merchantBusinesses" ofType="com.yada.ssp.model.MerchantBusiness">
+			<id property="businessBase" column="BUSINESS_ID"/>
+			<result property="paymerchantBases" column="MERCHAND_ID"/>
+			<result property="feeTable" column="FEE_ID"/>
+		</collection>
+	</resultMap>
+
+
+	<sql id="BusinessBase_columns">
+		T.BUSINESS_ID,
+		T.BUSINESS_NAME,
+		T.BUSINESS_INSTRUCTION
+	</sql>
+	<select id="BusinessBase_nextVal" resultType="String">
+		select lpad(SEQ_BUSINESS_BASE.NEXTVAL,15,'0') AS businessId FROM DUAL
+	</select>
+
+	<insert id="BusinessBase_insert" parameterType="com.yada.ssp.model.BusinessBase">
+		
+    <![CDATA[
+		insert into BUSINESS_BASE
+		 (BUSINESS_ID,
+		 BUSINESS_NAME,
+		 BUSINESS_INSTRUCTION)  
+		   values 
+		 (#{businessId,jdbcType=VARCHAR},
+		 #{businessName,jdbcType=VARCHAR},
+		 #{businessSm,jdbcType=VARCHAR})
+		]]>
+	</insert>
+
+	<update id="BusinessBase_update" parameterType="com.yada.ssp.model.BusinessBase">
+		update
+		BUSINESS_BASE set
+		BUSINESS_ID=#{businessId,jdbcType=VARCHAR},
+		BUSINESS_NAME=#{businessName,jdbcType=VARCHAR},
+		BUSINESS_INSTRUCTION=#{businessSm,jdbcType=VARCHAR}
+		where
+		BUSINESS_ID=#{businessId,jdbcType=VARCHAR}
+	</update>
+
+	<delete id="BusinessBase_delete">
+		delete from BUSINESS_BASE where BUSINESS_ID=#{businessId,jdbcType=VARCHAR}
+	</delete>
+
+	<select id="BusinessBase_getById" resultMap="BusinessBase">
+		SELECT
+		<include refid="BusinessBase_columns" />
+		FROM BUSINESS_BASE T
+		WHERE T.BUSINESS_ID=#{businessId,jdbcType=VARCHAR}
+	</select>
+
+
+	<select id="BusinessBase_findAll" resultMap="BusinessBase">
+		SELECT
+		<include refid="BusinessBase_columns" />
+		FROM BUSINESS_BASE T
+	</select>
+	
+	<!-- <select id="BusinessBase_getBusinessBaseByCustomerNo" resultMap="BusinessBase"> 
+		SELECT <include refid="BusinessBase_columns" /> FROM BusinessBase T 
+		RIGHT JOIN CUSTOMER_BusinessBase C ON C.BusinessBase_ID = T.BusinessBase_ID 
+		WHERE C.CERTIFICATE_NO = #{certificateNo} AND C.CERTIFICATE_TYPE = #{certificateTypeId} 
+		AND T.STATE = '1' AND T.START_DATE &lt;= #{nowDate} AND T.END_DATE &gt;= 
+		#{nowDate} and C.IS_JOIN='1' </select> <select id="BusinessBase_getBusinessBaseByCustomerNoAndProductId" 
+		resultMap="BusinessBase"> SELECT <include refid="BusinessBase_columns" 
+		/> FROM CUSTOMER_BusinessBase C LEFT JOIN BusinessBase T ON C.BusinessBase_ID 
+		= T.BusinessBase_ID LEFT JOIN BusinessBase_PRODUCT_ENJOY E ON C.BusinessBase_ID 
+		= E.BusinessBase_ID WHERE C.CERTIFICATE_NO = #{certificateNo} AND C.CERTIFICATE_TYPE 
+		= #{certificateTypeId} AND T.STATE = '1' AND E.PRODUCT_ID = #{productId} 
+		</select> <select id="BusinessBase_getMersByMerName" resultMap="BusinessBaseEnjoyNameGroup"> 
+		select MER_NAME,MER_NO from BusinessBase_ENJOY where MER_NAME like '%'||#{merName}||'%' 
+		</select> -->
+
+	<sql id="BusinessBase_findPage_where">
+		<where>
+			<if test="businessId != null and businessId !=''">
+				AND T.BUSINESS_ID=#{businessId}
+			</if>
+
+			<if test="businessName != null and businessName !=''">
+				AND T.BUSINESS_NAME like '%'||#{businessName}||'%'
+			</if>
+
+			<!--<if test="accountNo != null and accountNo !=''">
+				AND T.ACCOUNT_NO=#{accountNo}
+			</if>
+			<if test="contactPerson != null and contactPerson !=''">
+				AND T.CONTACT_PERSON like '%'||#{contactPerson}||'%'
+			</if>
+
+			<if test="servicePhone != null and servicePhone !=''">
+				AND T.SERVICE_PHONE=#{servicePhone}
+			</if>
+			 <if test="BusinessBaseName != null and BusinessBaseName !=''"> 
+				AND T.BusinessBase_NAME like '%'||#{BusinessBaseName}||'%' </if> <if 
+				test="startDate != null and startDate !=''"> AND T.START_DATE &gt;= #{startDate} 
+				</if> <if test="endDate != null and endDate !=''"> AND T.END_DATE &lt;= #{endDate} 
+				</if> <if test="remark != null and remark !=''"> AND T.REMARK = #{remark} 
+				</if> <if test="giftCount != null and giftCount !=''"> AND T.GIFT_COUNT = 
+				#{giftCount} </if> <if test="clientPrompt != null and clientPrompt !=''"> 
+				AND T.CLIENT_PROMPT = #{clientPrompt} </if> <if test="state != null and state 
+				!=''"> AND T.STATE = #{state} </if> -->
+		</where>
+	</sql>
+
+	<select id="BusinessBase_findCountByWhere" resultType="int">
+		SELECT count(*) FROM BUSINESS_BASE T
+		<include refid="BusinessBase_findPage_where" />
+	</select>
+
+
+	<select id="BusinessBase_findListByWhere" resultMap="BusinessBase">
+		SELECT
+		<include refid="BusinessBase_columns" />
+		FROM BUSINESS_BASE T
+		<include refid="BusinessBase_findPage_where" />
+		ORDER BY T.BUSINESS_ID DESC
+	</select>
+</mapper>
+

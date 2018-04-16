@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+        "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+
+
+<mapper namespace="com.yada.ssp.dao.CategoryDao">
+
+    <resultMap id="Category" type="com.yada.ssp.model.Category">
+        <result property="id" column="ID"/>
+        <result property="papers" column="PAPERS"/>
+        <result property="detail" column="DETAIL"/>
+    </resultMap>
+
+
+    <sql id="Category_columns">
+        T.ID,T.PAPERS,T.DETAIL
+    </sql>
+
+    <insert id="Category_insert">
+        INSERT INTO CATEGORY T(
+        T.ID,T.PAPERS,T.DETAIL
+        ) VALUES (
+        #{id,jdbcType=VARCHAR},#{papers,jdbcType=VARCHAR},#{detail,jdbcType=VARCHAR})
+    </insert>
+
+    <update id="Category_update" parameterType="com.yada.ssp.model.Category">
+        UPDATE CATEGORY
+        SET
+        PAPERS=#{papers,jdbcType=VARCHAR},
+        DETAIL=#{detail,jdbcType=VARCHAR}
+        WHERE ID=#{id,jdbcType=VARCHAR}
+    </update>
+
+    <delete id="Category_delete">
+        DELETE FROM CATEGORY WHERE ID=#{id,jdbcType=VARCHAR}
+    </delete>
+
+    <select id="Category_getById" resultMap="Category">
+        SELECT
+        <include refid="Category_columns"/>
+        FROM CATEGORY T
+        WHERE
+        T.ID=#{id,jdbcType=VARCHAR}
+    </select>
+
+    <sql id="Category_findPage_where">
+
+        <where>
+            <if test="id != null and id !=''">
+                AND T.ID = #{id}
+            </if>
+            <if test="detail != null and detail !=''">
+                AND T.DETAIL=#{detail}
+            </if>
+        </where>
+    </sql>
+
+    <select id="Category_findCountByWhere" resultType="int">
+        SELECT count(*) FROM CATEGORY T
+        <include refid="Category_findPage_where"/>
+    </select>
+
+
+    <select id="Category_findListByWhere" resultMap="Category">
+        SELECT
+        <include refid="Category_columns"/>
+        FROM CATEGORY T
+        <include refid="Category_findPage_where"/>
+    </select>
+
+</mapper>
+

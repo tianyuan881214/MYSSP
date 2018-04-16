@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+        "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+
+<mapper namespace="com.yada.ssp.dao.MerchantBaseSonDao">
+
+    <resultMap id="MerchantBaseSon" type="com.yada.ssp.model.MerchantBaseSon">
+        <result property="merchantId" column="MERCHANT_ID"/>
+        <result property="accountNo" column="ACCOUNT_NO"/>
+        <result property="accountName" column="ACCOUNT_NAME"/>
+        <result property="openingBank" column="OPENING_BANK"/>
+        <result property="openingBankNo" column="OPENING_BANK_NO"/>
+        <result property="openingBankAddress" column="OPENING_BANK_ADDRESS"/>
+        <result property="cardHolderName" column="CARDHOLDER_NAME"/>
+        <result property="merGrpId" column="MER_GRP_ID"/>
+        <result property="cardHolderMobile" column="CARDHOLDER_MOVEIPHONE"/>
+        <result property="cardHolderTelephone" column="CARDHOLDER_TELEPHONE"/>
+        <result property="cardHolderAddressChn" column="ADDRESS_CHN"/>
+        <result property="addressEng" column="ADDRESS_ENG"/>
+        <result property="fax" column="FAX"/>
+        <result property="postCode" column="POST_CODE"/>
+        <result property="email" column="E_MAIL"/>
+        <result property="idCard" column="ID_CARD"/>
+        <result property="businessLicense" column="BUSINESS_LICENSE"/>
+        <result property="memo" column="MEMO"/>
+        <result property="contactName" column="CONTACT_NAME"/>
+        <result property="contactType" column="CONTACT_TYPE"/>
+        <result property="cardNo" column="CARD_NO"/>
+        <result property="cardName" column="CARD_NAME"/>
+        <result property="businessLicenseType" column="BUSINESS_LICENSE_TYPE"/>
+        <result property="provinceCode" column="PROVINCE_CODE"/>
+        <result property="cityCode" column="CITY_CODE"/>
+        <result property="districtCode" column="DISTRICT_CODE"/>
+        <result property="merchantLevel" column="MERCHANT_LEVEL"/>
+
+    </resultMap>
+
+    <sql id="MerchantBaseSon_columns">
+        T.MERCHANT_ID,T.ACCOUNT_NO,T.ACCOUNT_NAME,T.OPENING_BANK,T.OPENING_BANK_NO,T.OPENING_BANK_ADDRESS,T.CARDHOLDER_NAME,
+        T.MER_GRP_ID,T.CARDHOLDER_MOVEIPHONE,T.CARDHOLDER_TELEPHONE,T.ADDRESS_CHN,T.ADDRESS_ENG,T.FAX,T.POST_CODE,
+        T.E_MAIL,T.ID_CARD,T.BUSINESS_LICENSE,T.MEMO,T.CONTACT_NAME,T.CONTACT_TYPE,T.CARD_NO,T.CARD_NAME,T.BUSINESS_LICENSE_TYPE,
+        T.PROVINCE_CODE,T.CITY_CODE,T.DISTRICT_CODE,T.MERCHANT_LEVEL
+    </sql>
+    <sql id="MerchantBaseSon_columns_l">
+        T.MERCHANT_ID,
+        T.ACCOUNT_NAME,
+        T.OPENING_BANK
+    </sql>
+    <insert id="MerchantBaseSon_insert" parameterType="com.yada.ssp.model.MerchantBaseSon">
+        <![CDATA[
+
+
+
+		insert into MERCHANT_ADD_INFO
+		 (MERCHANT_ID,ACCOUNT_NO,ACCOUNT_NAME,OPENING_BANK,OPENING_BANK_NO,OPENING_BANK_ADDRESS,CARDHOLDER_NAME,
+		MER_GRP_ID,CARDHOLDER_MOVEIPHONE,CARDHOLDER_TELEPHONE,ADDRESS_CHN,ADDRESS_ENG,FAX,POST_CODE,
+		E_MAIL,ID_CARD,BUSINESS_LICENSE,MEMO,CONTACT_NAME,CONTACT_TYPE,CARD_NO,CARD_NAME,BUSINESS_LICENSE_TYPE,
+		PROVINCE_CODE,CITY_CODE,DISTRICT_CODE,MERCHANT_LEVEL
+		)
+		   values
+		 (#{merchantId,jdbcType=VARCHAR},
+		 #{accountNo,jdbcType=VARCHAR},
+		 #{accountName,jdbcType=VARCHAR},
+		 #{openingBank,jdbcType=VARCHAR},
+		 #{openingBankNo,jdbcType=VARCHAR},
+		 #{openingBankAddress,jdbcType=VARCHAR},
+		 #{cardHolderName,jdbcType=VARCHAR},
+		 #{merGrpId,jdbcType=VARCHAR},
+		  #{cardHolderMobile,jdbcType=VARCHAR},
+		 #{cardHolderTelephone,jdbcType=VARCHAR},
+		  #{cardHolderAddressChn,jdbcType=VARCHAR},
+		  #{addressEng,jdbcType=VARCHAR},
+		  #{fax,jdbcType=VARCHAR},
+		  #{postCode,jdbcType=VARCHAR},
+		  #{email,jdbcType=VARCHAR},
+		  #{idCard,jdbcType=VARCHAR},
+		  #{businessLicense,jdbcType=VARCHAR},
+		  #{memo,jdbcType=VARCHAR},
+          #{contactName,jdbcType=VARCHAR},
+		  #{contactType,jdbcType=VARCHAR},
+		  #{cardNo,jdbcType=VARCHAR},
+		  #{cardName,jdbcType=VARCHAR},
+		  #{businessLicenseType,jdbcType=VARCHAR},
+		  #{provinceCode,jdbcType=VARCHAR},
+		  #{cityCode,jdbcType=VARCHAR},
+		  #{districtCode,jdbcType=VARCHAR},
+		  #{merchantLevel,jdbcType=VARCHAR}
+		  )
+
+        ]]>
+    </insert>
+
+    <update id="MerchantBaseSon_update" parameterType="com.yada.ssp.model.MerchantBaseSon">
+		update
+		MERCHANT_ADD_INFO set
+        ACCOUNT_NO=#{accountNo,jdbcType=VARCHAR},
+        ACCOUNT_NAME=#{accountName,jdbcType=VARCHAR},
+        OPENING_BANK=#{openingBank,jdbcType=VARCHAR},
+        OPENING_BANK_NO=#{openingBankNo,jdbcType=VARCHAR},
+        OPENING_BANK_ADDRESS=#{openingBankAddress,jdbcType=VARCHAR},
+        CARDHOLDER_NAME=#{cardHolderName,jdbcType=VARCHAR},
+        MER_GRP_ID=#{merGrpId,jdbcType=CHAR},
+        CARDHOLDER_MOVEIPHONE=#{cardHolderMobile,jdbcType=CHAR},
+        CARDHOLDER_TELEPHONE=#{cardHolderTelephone,jdbcType=VARCHAR},
+        ADDRESS_CHN=#{cardHolderAddressChn,jdbcType=VARCHAR},
+        ADDRESS_ENG=#{addressEng,jdbcType=VARCHAR},
+        FAX=#{fax,jdbcType=VARCHAR},
+        POST_CODE=#{postCode,jdbcType=CHAR},
+        E_MAIL=#{email,jdbcType=VARCHAR},
+        ID_CARD=#{idCard,jdbcType=CHAR},
+        BUSINESS_LICENSE=#{businessLicense,jdbcType=VARCHAR},
+        MEMO=#{memo,jdbcType=VARCHAR},
+        CONTACT_NAME=#{contactName,jdbcType=VARCHAR},
+		CONTACT_TYPE=#{contactType,jdbcType=VARCHAR},
+		CARD_NO=#{cardNo,jdbcType=VARCHAR},
+		CARD_NAME=#{cardName,jdbcType=VARCHAR},
+		BUSINESS_LICENSE_TYPE=#{businessLicenseType,jdbcType=VARCHAR},
+		PROVINCE_CODE=#{provinceCode,jdbcType=VARCHAR},
+		CITY_CODE=#{cityCode,jdbcType=VARCHAR},
+		DISTRICT_CODE=#{districtCode,jdbcType=VARCHAR},
+		MERCHANT_LEVEL=#{merchantLevel,jdbcType=VARCHAR}
+		where
+		MERCHANT_ID=#{merchantId,jdbcType=CHAR}
+	</update>
+
+    <delete id="MerchantBaseSon_delete">
+		delete from MERCHANT_ADD_INFO where MERCHANT_ID=#{merchantId}
+	</delete>
+
+    <select id="MerchantBaseSon_getById" resultMap="MerchantBaseSon">
+        SELECT
+        <include refid="MerchantBaseSon_columns"/>
+        FROM MERCHANT_ADD_INFO T
+        WHERE T.MERCHANT_ID=#{merchantId,jdbcType=VARCHAR}
+    </select>
+
+    <select id="MerchantBaseSon_findByMerGrpId" resultMap="MerchantBaseSon">
+        SELECT
+        <include refid="MerchantBaseSon_columns"/>
+        FROM MERCHANT_ADD_INFO T
+        WHERE T.MER_GRP_ID=#{merGrpId,jdbcType=VARCHAR}
+    </select>
+
+    <select id="MerchantBaseSon_getmerchantenterb" resultMap="MerchantBaseSon">
+        SELECT
+        <include refid="MerchantBaseSon_columns_l"/>
+        from
+        (select m.merchand_id as MERCHANT_ID,
+        b.business_name as ACCOUNT_NAME,
+        f.fee as OPENING_BANK
+        from merchant_business m,
+        MERCHANT_ADD_INFO p,
+        business_base b,
+        FEE_LS f
+        where m.merchand_id = p.merchant_id
+        and m.business_id = b.business_id
+        and m.fee_id = f.fee_id) T WHERE T.MERCHANT_ID=#{Id,jdbcType=VARCHAR}
+    </select>
+
+    <sql id="MerchantBaseSon_findPage_where">
+        <where>
+            <if test="merNo != null and merNo !=''">
+                AND T.MER_NO=#{merNo}
+            </if>
+
+            <if test="merName != null and merName !=''">
+                AND T.MER_NAME like '%'||#{merName}||'%'
+            </if>
+
+            <if test="accountNo != null and accountNo !=''">
+                AND T.ACCOUNT_NO=#{accountNo}
+            </if>
+            <if test="contactPerson != null and contactPerson !=''">
+                AND T.CONTACT_PERSON like '%'||#{contactPerson}||'%'
+            </if>
+
+            <if test="servicePhone != null and servicePhone !=''">
+                AND T.SERVICE_PHONE=#{servicePhone}
+            </if>
+        </where>
+    </sql>
+
+    <select id="MerchantBaseSon_findCountByWhere" resultType="int">
+        SELECT count(*) FROM MERCHANT_ADD_INFO T
+        <include refid="MerchantBaseSon_findPage_where"/>
+    </select>
+
+
+    <select id="MerchantBaseSon_findListByWhere" resultMap="MerchantBaseSon">
+        SELECT
+        <include refid="MerchantBaseSon_columns"/>
+        FROM MERCHANT_ADD_INFO T
+        <include refid="MerchantBaseSon_findPage_where"/>
+        ORDER BY T.MERCHNAT_ID DESC
+    </select>
+</mapper>
+

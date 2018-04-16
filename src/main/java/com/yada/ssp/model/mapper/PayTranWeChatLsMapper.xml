@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+        "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+
+<mapper namespace="com.yada.ssp.dao.PayTranWeChatLsDao">
+
+    <resultMap id="PayTranWeChatLs" type="com.yada.ssp.model.PayTranWeChatLs">
+        <result property="outTradeNo" column="OUT_TRADE_NO"/>
+        <result property="oldBatchNo" column="OLD_BATCHNO"/>
+        <result property="oldTraceNo" column="OLD_TRACENO"/>
+        <result property="oldTranDate" column="OLD_TRANDATE"/>
+        <result property="oldTranTime" column="OLD_TRANTIME"/>
+        <result property="authCode" column="AUTH_CODE"/>
+        <result property="batchNo" column="BATCH_NO"/>
+        <result property="errCode" column="ERR_CODE"/>
+        <result property="mchId" column="MCH_ID"/>
+        <result property="merchantNo" column="MERCHANT_NO"/>
+        <result property="merchantName" column="MERCHANT_NAME"/>
+        <result property="operatorId" column="OPERATOR_ID"/>
+        <result property="refundFlag" column="REFUND_FLAG"/>
+        <result property="resultCode" column="RESULT_CODE"/>
+        <result property="returnCode" column="RETURN_CODE"/>
+        <result property="returnMsg" column="RETURN_MSG"/>
+        <result property="terminalId" column="TERMINAL_ID"/>
+        <result property="totalAmount" column="TOTAL_AMOUNT"/>
+        <result property="traceNo" column="TRACE_NO"/>
+        <result property="tradeType" column="TRADE_TYPE"/>
+        <result property="tranDate" column="TRAN_DATE"/>
+        <result property="tranTime" column="TRAN_TIME"/>
+        <result property="tranType" column="TRAN_TYPE"/>
+        <result property="transactionId" column="TRANSACTION_ID"/>
+        <result property="undoFlag" column="UNDO_FLAG"/>
+        <result property="name" column="NAME"/>
+        <result property="merchantCname" column="MERCHANT_CNAME"/>
+        <result property="inOrg" column="inOrg"/>
+    </resultMap>
+
+
+    <sql id="PayTranWeChatLs_columns">
+        T.OUT_TRADE_NO,
+        T.OLD_BATCHNO,
+        T.OLD_TRACENO,
+        T.OLD_TRANDATE,
+        T.OLD_TRANTIME,
+        T.AUTH_CODE,
+        T.BATCH_NO,
+        T.ERR_CODE,
+        T.MCH_ID,
+        T.MERCHANT_NO,
+        T.MERCHANT_CNAME as MERCHANT_NAME,
+        T.OPERATOR_ID,
+        T.REFUND_FLAG,
+        T.RESULT_CODE,
+        T.RETURN_CODE,
+        T.RETURN_MSG,
+        T.TERMINAL_ID,
+        T.TOTAL_AMOUNT as TOTAL_AMOUNT,
+        T.TRACE_NO,
+        T.TRADE_TYPE,
+        T.TRAN_DATE,
+        T.TRAN_TIME,
+        T.TRAN_TYPE,
+        T.TRANSACTION_ID,
+        T.UNDO_FLAG,
+        T.NAME as inOrg
+    </sql>
+
+
+
+    <select id="PayTranWeChatLs_getById" resultMap="PayTranWeChatLs">
+        SELECT
+        <include refid="PayTranWeChatLs_columns"/>
+        FROM (
+        select * from (
+        select * from (
+        SELECT * FROM WECHAT_TRAN_LS
+        UNION ALL
+        SELECT * FROM OLD_WECHAT_TRAN_LS
+        )T JOIN MERCHANT_BASE M ON T.MERCHANT_NO = M.MERCHANT_ID
+        JOIN T_B_ORG O ON M.ZBANK = O.ORG_ID
+        )
+        )T WHERE T.OUT_TRADE_NO=#{outTradeNo,jdbcType=VARCHAR}
+    </select>
+
+
+    <sql id="PayTranWeChatLs_findPage_where">
+        <where>
+            <if test="outTradeNo != null and outTradeNo!=''">
+                AND T.OUT_TRADE_NO=#{outTradeNo}
+            </if>
+            <if test="transactionId != null and transactionId!=''">
+                AND T.TRANSACTION_ID=#{transactionId}
+            </if>
+            <if test="merchantNo != null and merchantNo!=''">
+                AND T.MERCHANT_NO=#{merchantNo}
+            </if>
+
+
+            <if test="tranDateTimeBegin != null and tranDateTimeBegin !=''">
+                AND T.TRAN_DATE &gt;= #{tranDateTimeBegin}
+            </if>
+            <if test="tranDateTimeEnd != null and tranDateTimeEnd !=''">
+                AND T.TRAN_DATE &lt;= #{tranDateTimeEnd}
+            </if>
+            <if test="tranDate != null and tranDate !=''">
+                AND T.TRAN_DATE = #{tranDate}
+            </if>
+        </where>
+    </sql>
+
+    <select id="PayTranWeChatLs_findCountByWhere" resultType="int">
+        SELECT count(*)
+        FROM (
+        select * from (
+        select * from (
+        SELECT  * FROM WECHAT_TRAN_LS
+        UNION ALL
+        SELECT * FROM OLD_WECHAT_TRAN_LS
+        )T  JOIN MERCHANT_BASE M ON T.MERCHANT_NO = M.MERCHANT_ID
+        JOIN T_B_ORG O ON M.ZBANK = O.ORG_ID
+        where o.ORG_ID in (select o.org_id from t_b_org o start with o.org_id=#{orgId} connect by o.p_org_id=prior o.org_id)
+        )
+        )T
+        <include refid="PayTranWeChatLs_findPage_where"/>
+    </select>
+
+
+    <select id="PayTranWeChatLs_findListByWhere" resultMap="PayTranWeChatLs">
+        SELECT <include refid="PayTranWeChatLs_columns"/>
+        FROM (
+        select * from (
+        select * from (
+        SELECT  * FROM WECHAT_TRAN_LS
+        UNION ALL
+        SELECT * FROM OLD_WECHAT_TRAN_LS
+        )T  JOIN MERCHANT_BASE M ON T.MERCHANT_NO = M.MERCHANT_ID
+        JOIN T_B_ORG O ON M.ZBANK = O.ORG_ID
+        where o.ORG_ID in (select o.org_id from t_b_org o start with o.org_id=#{orgId} connect by o.p_org_id=prior o.org_id)
+        ))T
+        <include refid="PayTranWeChatLs_findPage_where" />
+        order by tran_date desc,tran_time desc
+
+    </select>
+
+    <select id="PayTranWeChatLs_findAll" resultMap="PayTranWeChatLs">
+        SELECT
+        <include refid="PayTranWeChatLs_columns"/>
+        FROM(
+        select * from (
+        select * from (
+        SELECT  * FROM WECHAT_TRAN_LS
+        UNION ALL
+        SELECT * FROM OLD_WECHAT_TRAN_LS
+        )T  JOIN MERCHANT_BASE M ON T.MERCHANT_NO = M.MERCHANT_ID
+        JOIN T_B_ORG O ON M.ZBANK = O.ORG_ID
+        where o.ORG_ID in (select o.org_id from t_b_org o start with o.org_id=#{orgId} connect by o.p_org_id=prior o.org_id)
+        ))T
+        <include refid="PayTranWeChatLs_findPage_where" />
+        order by tran_date desc,tran_time desc
+    </select>
+
+
+</mapper>
+

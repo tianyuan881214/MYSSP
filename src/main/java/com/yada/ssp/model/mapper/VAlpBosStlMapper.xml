@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+        "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+
+
+<mapper namespace="com.yada.ssp.dao.VAlpBocStlDao">
+    <resultMap id="VAlpBocStl" type="com.yada.ssp.model.VAlpBocStl">
+        <result property="businessBase" column="businessBase"/>
+        <result property="merchantId" column="MERCHANT_ID"/>
+        <result property="merchantCname" column="MERCHANT_CNAME"/>
+        <result property="orderSumAmt" column="ORDER_SUM_AMT"/>
+        <result property="serviceAmt" column="SERVICE_AMT"/>
+        <result property="netAmount" column="NET_AMOUNT"/>
+        <result property="merFee" column="MER_FEE"/>
+        <result property="settleAmt" column="SETTLE_AMT"/>
+        <result property="tranDate" column="TRAN_DATE"/>
+        <result property="merchantNo" column="MERCHANT_NO"/>
+        <result property="name" column="NAME"/>
+        <result property="merServiceAmt" column="MER_SERVICE_AMT"/>
+    </resultMap>
+
+    <sql id="VAlpBocStl_columns">
+       T.businessBase,
+       T.MERCHANT_ID,
+       T.MERCHANT_CNAME,
+       T.ORDER_SUM_AMT,
+       T.SERVICE_AMT,
+       T.NET_AMOUNT,
+       T.MER_FEE,
+       to_char(T.SERVICE_AMT+T.MER_FEE,'999999990.99') as MER_SERVICE_AMT,
+       T.SETTLE_AMT,
+       T.TRAN_DATE,
+       T.NAME
+    </sql>
+
+    <sql id="VAlpBocStl_findPage_where">
+        <where>
+            <if test="businessBase != null and businessBase !=''">
+                AND T.businessBase=#{businessBase}
+            </if>
+            <if test="merchantId != null and merchantId !=''">
+                AND T.MERCHANT_ID=#{merchantId}
+            </if>
+            <if test="tranDateTimeBegin != null and tranDateTimeBegin !=''">
+                AND T.TRAN_DATE &gt;= #{tranDateTimeBegin}
+            </if>
+            <if test="tranDateTimeEnd != null and tranDateTimeEnd !=''">
+                AND T.TRAN_DATE &lt;= #{tranDateTimeEnd}
+            </if>
+
+        </where>
+    </sql>
+
+    <select id="VAlpBocStl_findCountByWhere" resultType="int">
+        SELECT count(*) FROM (
+        select T.*,o.name from (
+        select a.*,'000000000000002' as businessBase from  V_ALP_BOC_STL a
+        union all
+        select w.*,'000000000000003' as businessBase from  v_werchant_boc_stl w
+        ) T  JOIN MERCHANT_BASE M ON T.MERCHANT_ID = M.MERCHANT_ID
+        JOIN T_B_ORG O ON M.ZBANK = O.ORG_ID
+        where o.ORG_ID in (select o.org_id from t_b_org o start with o.org_id=#{orgId} connect by o.p_org_id=prior o.org_id)
+
+        )T
+        <include refid="VAlpBocStl_findPage_where"/>
+    </select>
+
+
+    <select id="VAlpBocStl_findListByWhere" resultMap="VAlpBocStl">
+        SELECT
+        <include refid="VAlpBocStl_columns"/>
+        FROM (
+        select T.*,o.name from (
+        select a.*,'000000000000002' as businessBase from  V_ALP_BOC_STL a
+        union all
+        select w.*,'000000000000003' as businessBase from  v_werchant_boc_stl w
+        ) T  JOIN MERCHANT_BASE M ON T.MERCHANT_ID = M.MERCHANT_ID
+        JOIN T_B_ORG O ON M.ZBANK = O.ORG_ID
+        where o.ORG_ID in (select o.org_id from t_b_org o start with o.org_id=#{orgId} connect by o.p_org_id=prior o.org_id)
+
+        )T
+        <include refid="VAlpBocStl_findPage_where"/>
+    </select>
+
+    <select id="VAlpBocStl_findAll" resultMap="VAlpBocStl">
+        SELECT
+        <include refid="VAlpBocStl_columns"/> FROM
+        (
+        select T.*,o.name from (
+        select a.*,'000000000000002' as businessBase from  V_ALP_BOC_STL a
+        union all
+        select w.*,'000000000000003' as businessBase from  v_werchant_boc_stl w
+        ) T  JOIN MERCHANT_BASE M ON T.MERCHANT_ID = M.MERCHANT_ID
+        JOIN T_B_ORG O ON M.ZBANK = O.ORG_ID
+        where o.ORG_ID in (select o.org_id from t_b_org o start with o.org_id=#{orgId} connect by o.p_org_id=prior o.org_id)
+
+        )T
+        <include refid="VAlpBocStl_findPage_where"/>
+    </select>
+
+</mapper>
+

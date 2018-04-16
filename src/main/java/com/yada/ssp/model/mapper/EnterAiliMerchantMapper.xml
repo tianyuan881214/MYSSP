@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+        "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+
+
+<mapper namespace="com.yada.ssp.dao.EnterAiliMerchantDao">
+
+    <resultMap id="EnterAiliMerchant" type="com.yada.ssp.model.EnterAiliMerchant">
+        <result property="external_id" column="MERCHANT_ID"/>
+        <result property="category_id" column="CATEGORY_ID"/>
+        <result property="source" column="SOURCE"/>
+        <result property="sub_merchant_id" column="SUB_MERCHANT_ID"/>
+        <result property="up_select" column="UP_SELECT"/>
+        <result property="name" column="NAME"/>
+        <result property="alias_name" column="ALIAS_NAME"/>
+        <!--
+        <result property="service_phone" column="SERVICE_PHONE"/>
+        <result property="contact_name" column="CONTACT_NAME"/>
+        <result property="contact_phone" column="CONTACT_PHONE"/>
+        <result property="contact_mobile" column="CONTACT_MOBILE"/>
+        <result property="business_license" column="BUSINESS_LICENSE"/>
+        <result property="id_card" column="ID_CARD"/>
+        <result property="fee" column="FEE"/>
+        <result property="lock_mode" column="LOCK_MODE"/>
+        <result property="oper_no" column="OPER_NO"/>
+        <result property="update_date" column="UPDATE_DATE"/>
+        <result property="update_time" column="UPDATE_TIME"/>-->
+    </resultMap>
+
+    <sql id="EnterAiliMerchant_columns">
+        T.MERCHANT_ID,T.CATEGORY_ID,T.SOURCE,T.SUB_MERCHANT_ID,T.UP_SELECT,T.NAME,T.ALIAS_NAME
+    </sql>
+
+
+    <insert id="EnterAiliMerchant_insert">
+
+        INSERT INTO ALIPAY_MERCHANT_BASE (
+        MERCHANT_ID,CATEGORY_ID,SOURCE,SUB_MERCHANT_ID,UP_SELECT,NAME,ALIAS_NAME)
+        VALUES (
+        #{external_id jdbcType=VARCHAR} ,
+        #{category_id jdbcType=VARCHAR} ,
+        #{source jdbcType=VARCHAR} ,
+        #{sub_merchant_id jdbcType=VARCHAR} ,
+        #{up_select jdbcType=VARCHAR} ,
+        #{name jdbcType=VARCHAR} ,
+        #{alias_name jdbcType=VARCHAR}
+        )
+    </insert>
+    <!--#{alias_name jdbcType=VARCHAR} ,
+    #{business_license jdbcType=VARCHAR},
+
+    #{contact_mobile jdbcType=VARCHAR} ,
+    #{contact_name jdbcType=VARCHAR} ,
+    #{contact_phone jdbcType=VARCHAR} ,
+    #{fee jdbcType=VARCHAR},
+    #{id_card jdbcType=VARCHAR} ,
+    #{lock_mode jdbcType=VARCHAR} ,
+    #{name jdbcType=VARCHAR} ,
+    #{oper_no jdbcType=VARCHAR} ,
+    #{service_phone jdbcType=VARCHAR} ,
+    #{update_date jdbcType=VARCHAR},
+    #{update_time jdbcType=VARCHAR}
+
+
+    ALIAS_NAME = #{alias_name} ,
+        BUSINESS_LICENSE = #{business_license} ,CONTACT_MOBILE =	#{contact_mobile} ,
+        CONTACT_NAME = #{contact_name} ,
+        CONTACT_PHONE = #{contact_phone} ,
+        FEE	= #{fee} ,
+        ID_CARD = #{id_card} ,
+        LOCK_MODE = #{lock_mode} ,
+        NAME = #{name} ,
+        OPER_NO	= #{oper_no} ,
+        SERVICE_PHONE = #{service_phone},UPDATE_DATE = #{update_date},
+        UPDATE_TIME = #{update_time}
+    -->
+    <update id="EnterAiliMerchant_update">
+        UPDATE ALIPAY_MERCHANT_BASE SET
+        CATEGORY_ID	= #{category_id,jdbcType=VARCHAR} ,
+        SOURCE = #{source,jdbcType=VARCHAR} ,
+        SUB_MERCHANT_ID = #{sub_merchant_id,jdbcType=VARCHAR} ,
+        UP_SELECT = #{up_select,jdbcType=VARCHAR},
+        ALIAS_NAME = #{alias_name,jdbcType=VARCHAR} ,
+        NAME = #{name,jdbcType=VARCHAR}
+        WHERE
+        MERCHANT_ID = #{external_id,jdbcType=VARCHAR}
+    </update>
+
+    <delete id="EnterAiliMerchant_delete">
+        DELETE FROM ALIPAY_MERCHANT_BASE WHERE
+        MERCHANT_ID = #{external_id,jdbcType=VARCHAR}
+    </delete>
+
+    <select id="EnterAiliMerchant_getById" resultMap="EnterAiliMerchant">
+        SELECT
+        <include refid="EnterAiliMerchant_columns"/>
+        FROM ALIPAY_MERCHANT_BASE T
+        WHERE
+        MERCHANT_ID = #{external_id,jdbcType=VARCHAR}
+    </select>
+
+    <sql id="EnterAiliMerchant_findPage_where">
+
+        <where>
+
+        </where>
+    </sql>
+
+    <select id="EnterAiliMerchant_findCountByWhere" resultType="int">
+        SELECT count(*) FROM ALIPAY_MERCHANT_BASE T
+        <include refid="EnterAiliMerchant_findPage_where"/>
+    </select>
+
+
+    <select id="EnterAiliMerchant_findListByWhere" resultMap="EnterAiliMerchant">
+        SELECT
+        <include refid="EnterAiliMerchant_columns"/>
+        FROM ALIPAY_MERCHANT_BASE T
+        <include refid="EnterAiliMerchant_findPage_where"/>
+    </select>
+
+</mapper>
+

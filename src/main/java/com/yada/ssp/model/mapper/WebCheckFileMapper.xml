@@ -1,0 +1,297 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+        "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+
+
+<mapper namespace="com.yada.ssp.dao.WebCheckFileDao">
+    <resultMap id="WebCheckFile" type="com.yada.ssp.model.WebCheckFile">
+
+        <result property="id" column="ID"/>
+        <result property="tranTime" column="TRAN_TIME"/>
+        <result property="appid" column="APPID"/>
+        <result property="merchantId" column="MERCHANT_ID"/>
+        <result property="merchantName" column="MERCHANT_NAME"/>
+        <result property="subMerchantID" column="SUB_MERCHANT_ID"/>
+        <result property="deviceNumber" column="DEVICE_NUMBER"/>
+        <result property="transactionId" column="TRANSACTION_ID"/>
+        <result property="outTradeNo" column="OUT_TRADE_NO"/>
+        <result property="totalAmount" column="TOTAL_AMOUNT"/>
+        <result property="userFlag" column="USER_FLAG"/>
+        <result property="tranType" column="TRAN_TYPE"/>
+        <result property="tranStart" column="TRAN_START"/>
+        <result property="paymentBank" column="PAYMENT_BANK"/>
+        <result property="currencyCategory" column="CURRENCY_CATEGORY"/>
+        <result property="enterpriseRedPackage" column="ENTERPRISE_RED_PACKAGE"/>
+        <result property="refundId" column="REFUND_ID"/>
+        <result property="outRefundId" column="OUT_REFUND_ID"/>
+        <result property="returndAmt" column="RETURND_AMT"/>
+        <result property="erpRedundAmt" column="ERP_REFUND_AMT"/>
+        <result property="refundType" column="REFUND_TYPE"/>
+        <result property="refundStart" column="REFUND_START"/>
+        <result property="goodsName" column="GOODS_NAME"/>
+        <result property="mcrchantDbPackage" column="MCRCHANT_DB_PACKAGE"/>
+        <result property="fee" column="FEE"/>
+        <result property="feeRate" column="FEE_RATE"/>
+        <result property="inOrg" column="inOrg"/>
+        <result property="bankServiceAmt" column="bank_service_amt"/>
+        <result property="bank_fee" column="bank_fee"/>
+        <result property="netMerAmt" column="net_mer_amt"/>
+        <result property="netBankAmt" column="net_bank_amt"/>
+    </resultMap>
+
+
+    <sql id="WebCheckFile_columns">
+        T.ID,
+        T.TRAN_TIME,
+        T.APPID,
+        T.MERCHANT_ID,
+        T.MERCHANT_NAME,
+        T.SUB_MERCHANT_ID,
+        T.DEVICE_NUMBER,
+        T.TRANSACTION_ID,
+        T.OUT_TRADE_NO,
+        T.USER_FLAG,
+        T.TRAN_TYPE,
+        T.TRAN_START,
+        T.PAYMENT_BANK,
+        T.CURRENCY_CATEGORY,
+        T.ENTERPRISE_RED_PACKAGE,
+        T.REFUND_ID,
+        T.OUT_REFUND_ID,
+         to_char(T.TOTAL_AMOUNT,'999999999990.99') as TOTAL_AMOUNT,
+        to_char(T.RETURND_AMT,'999999999990.99') as RETURND_AMT,
+        T.ERP_REFUND_AMT,
+        T.REFUND_TYPE,
+        T.REFUND_START,
+        T.GOODS_NAME,
+        T.MCRCHANT_DB_PACKAGE,
+        to_char(T.FEE,'999999999990.99') as FEE,
+        to_char(T.FEE_RATE,'999999999990.99') as FEE_RATE,
+        T.inOrg,
+        T.org_id,
+        T.p_org_id,
+        T.bank_service_amt,
+        T.bank_fee,
+        T.net_mer_amt,
+        T.net_bank_amt
+    </sql>
+
+    <select id="WebCheckFile_getById" resultMap="WebCheckFile">
+        select
+        <include refid="WebCheckFile_columns"/> from (
+        SELECT
+        id,
+        tran_time,
+        appid,
+        sub_merchant_id,
+        device_number,
+        transaction_id,
+        out_trade_no,
+        user_flag,
+        tran_type,
+        tran_start,
+        payment_bank,
+        currency_category,
+        total_amount,
+        enterprise_red_package,
+        refund_id,
+        out_refund_id,
+        returnd_amt,
+        erp_refund_amt,
+        refund_type,
+        refund_start,
+        goods_name,
+        mcrchant_db_package,
+        to_char(T.fee,'999999999990.99')as fee,
+        to_char(fee_rate,'999999999990.99')as fee_rate,
+        to_char(t.TOTAL_AMOUNT - t.fee ,'999999999990.99') as net_bank_amt,
+        to_char(round(t.TOTAL_AMOUNT*nvl(fl.fee,0),2),'999999999990.99') as bank_service_amt,
+        to_char(fl.fee,'999999999990.99')as bank_fee,
+        to_char(t.TOTAL_AMOUNT - round(t.TOTAL_AMOUNT*nvl(fl.fee,0),2) ,'999999999990.99') as net_mer_amt,
+        M.MERCHANT_ID,
+        o.org_id,
+        o.p_org_id,
+        O.NAME AS inOrg,M.MERCHANT_CNAME AS MERCHANT_NAME
+        FROM WEBCHAT_SETTLE_LS T
+        left JOIN webchant_merchant_base b ON T.sub_merchant_id = b.sub_mch_id
+        left JOIN MERCHANT_BASE M ON b.MERCHANT_ID = M.MERCHANT_ID
+        left JOIN T_B_ORG O ON M.ZBANK = O.ORG_ID
+        left JOIN merchant_business rb  on m.merchant_id = rb.merchand_id
+        Left join Fee_Ls fl on rb.fee_id = fl.fee_id
+        where rb.business_id='000000000000003'
+        )T
+        WHERE
+        T.ID = #{id}
+    </select>
+
+    <sql id="WebCheckFile_findPage_where">
+
+        <where>
+            <if test="transactionId != null and transactionId !=''">
+                AND T.TRANSACTION_ID=#{transactionId}
+            </if>
+            <if test="merchantId != null and merchantId !=''">
+                AND T.MERCHANT_ID=#{merchantId}
+            </if>
+            <if test="outTradeNo != null and outTradeNo !=''">
+                AND T.OUT_TRADE_NO=#{outTradeNo}
+            </if>
+
+            <if test="tranStart != null and tranStart !=''">
+                AND T.tran_start = #{tranStart}
+            </if>
+            <if test="tranDateTimeBegin != null and tranDateTimeBegin !=''">
+                AND to_char(to_date(t.tran_time,'yyyy-mm-dd hh24:mi:ss'),'yyyymmdd') &gt;= #{tranDateTimeBegin}
+            </if>
+            <if test="tranDateTimeEnd != null and tranDateTimeEnd !=''">
+                AND to_char(to_date(t.tran_time,'yyyy-mm-dd hh24:mi:ss'),'yyyymmdd') &lt;= #{tranDateTimeEnd}
+            </if>
+        </where>
+    </sql>
+
+    <select id="WebCheckFile_findCountByWhere" resultType="int">
+        SELECT count(*) from (
+        SELECT
+        id,
+        tran_time,
+        appid,
+        sub_merchant_id,
+        device_number,
+        transaction_id,
+        out_trade_no,
+        user_flag,
+        tran_type,
+        tran_start,
+        payment_bank,
+        currency_category,
+        total_amount,
+        enterprise_red_package,
+        refund_id,
+        out_refund_id,
+        returnd_amt,
+        erp_refund_amt,
+        refund_type,
+        refund_start,
+        goods_name,
+        mcrchant_db_package,
+        to_char(T.fee,'999999999990.99')as fee,
+        to_char(fee_rate,'999999999990.9999')as fee_rate,
+        to_char(t.TOTAL_AMOUNT - t.fee ,'999999999990.99') as net_bank_amt,
+        to_char(round(t.TOTAL_AMOUNT*nvl(fl.fee,0),2),'999999999990.99') as bank_service_amt,
+        to_char(fl.fee,'999999999990.9999')as bank_fee,
+        to_char(t.TOTAL_AMOUNT - round(t.TOTAL_AMOUNT*nvl(fl.fee,0),2) ,'999999999990.99') as net_mer_amt,
+        M.MERCHANT_ID,
+        o.org_id,
+        o.p_org_id,
+        O.NAME AS inOrg,M.MERCHANT_CNAME AS MERCHANT_NAME
+        FROM WEBCHAT_SETTLE_LS T
+        left JOIN webchant_merchant_base b ON T.sub_merchant_id = b.sub_mch_id
+        left JOIN MERCHANT_BASE M ON b.MERCHANT_ID = M.MERCHANT_ID
+        left JOIN T_B_ORG O ON M.ZBANK = O.ORG_ID
+        left JOIN merchant_business rb  on m.merchant_id = rb.merchand_id
+        Left join Fee_Ls fl on rb.fee_id = fl.fee_id
+        where rb.business_id='000000000000003'
+        and O.ORG_ID in (select o.org_id from t_b_org o start with o.org_id=#{orgId} connect by o.p_org_id=prior o.org_id)
+        )T
+        <include refid="WebCheckFile_findPage_where"/>
+    </select>
+
+
+    <select id="WebCheckFile_findListByWhere" resultMap="WebCheckFile">
+        select
+        <include refid="WebCheckFile_columns"/> from (
+        SELECT
+        id,
+        tran_time,
+        appid,
+        sub_merchant_id,
+        device_number,
+        transaction_id,
+        out_trade_no,
+        user_flag,
+        tran_type,
+        tran_start,
+        payment_bank,
+        currency_category,
+        total_amount,
+        enterprise_red_package,
+        refund_id,
+        out_refund_id,
+        returnd_amt,
+        erp_refund_amt,
+        refund_type,
+        refund_start,
+        goods_name,
+        mcrchant_db_package,
+        to_char(T.fee,'999999999990.99')as fee,
+        to_char(fee_rate,'999999999990.9999')as fee_rate,
+        to_char(t.TOTAL_AMOUNT - t.fee ,'999999999990.99') as net_bank_amt,
+        to_char(round(t.TOTAL_AMOUNT*nvl(fl.fee,0),2),'999999999990.99') as bank_service_amt,
+        to_char(fl.fee,'999999999990.9999')as bank_fee,
+        to_char(t.TOTAL_AMOUNT - round(t.TOTAL_AMOUNT*nvl(fl.fee,0),2) ,'999,999,999,990.99') as net_mer_amt,
+        M.MERCHANT_ID,
+        o.org_id,
+        o.p_org_id,
+        O.NAME AS inOrg,M.MERCHANT_CNAME AS MERCHANT_NAME
+        FROM WEBCHAT_SETTLE_LS T
+        left JOIN webchant_merchant_base b ON T.sub_merchant_id = b.sub_mch_id
+        left JOIN MERCHANT_BASE M ON b.MERCHANT_ID = M.MERCHANT_ID
+        left JOIN T_B_ORG O ON M.ZBANK = O.ORG_ID
+        left JOIN merchant_business rb  on m.merchant_id = rb.merchand_id
+        Left join Fee_Ls fl on rb.fee_id = fl.fee_id
+        where rb.business_id='000000000000003'
+        and O.ORG_ID in (select o.org_id from t_b_org o start with o.org_id=#{orgId} connect by o.p_org_id=prior o.org_id)
+        )T
+        <include refid="WebCheckFile_findPage_where"/>
+    </select>
+    <select id="WebCheckFile_findAll" resultMap="WebCheckFile">
+        select
+        <include refid="WebCheckFile_columns"/>
+        from (
+        SELECT
+        id,
+        tran_time,
+        appid,
+        sub_merchant_id,
+        device_number,
+        transaction_id,
+        out_trade_no,
+        user_flag,
+        tran_type,
+        tran_start,
+        payment_bank,
+        currency_category,
+        total_amount,
+        enterprise_red_package,
+        refund_id,
+        out_refund_id,
+        returnd_amt,
+        erp_refund_amt,
+        refund_type,
+        refund_start,
+        goods_name,
+        mcrchant_db_package,
+        to_char(T.fee,'999999999990.99')as fee,
+        to_char(fee_rate,'999999999990.9999')as fee_rate,
+        to_char(t.TOTAL_AMOUNT - t.fee ,'999999999990.99') as net_bank_amt,
+        to_char(round(t.TOTAL_AMOUNT*nvl(fl.fee,0),2),'999999999990.99') as bank_service_amt,
+        to_char(fl.fee,'999999999990.9999')as bank_fee,
+        to_char(t.TOTAL_AMOUNT - round(t.TOTAL_AMOUNT*nvl(fl.fee,0),2) ,'999999999990.99') as net_mer_amt,
+        M.MERCHANT_ID,
+        o.org_id,
+        o.p_org_id,
+        O.NAME AS inOrg,M.MERCHANT_CNAME AS MERCHANT_NAME
+        FROM WEBCHAT_SETTLE_LS T
+        left JOIN webchant_merchant_base b ON T.sub_merchant_id = b.sub_mch_id
+        left JOIN MERCHANT_BASE M ON b.MERCHANT_ID = M.MERCHANT_ID
+        left JOIN T_B_ORG O ON M.ZBANK = O.ORG_ID
+        left JOIN merchant_business rb  on m.merchant_id = rb.merchand_id
+        Left join Fee_Ls fl on rb.fee_id = fl.fee_id
+        where rb.business_id='000000000000003'
+        and O.ORG_ID in (select o.org_id from t_b_org o start with o.org_id=#{orgId} connect by o.p_org_id=prior o.org_id)
+        )T
+        <include refid="WebCheckFile_findPage_where"/>
+    </select>
+</mapper>
+

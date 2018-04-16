@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+        "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+
+
+<mapper namespace="com.yada.ssp.dao.WebchantMerchantBaseDao">
+    <resultMap id="WebchantMerchantBase" type="com.yada.ssp.model.WebchantMerchantBase">
+        <result property="merchant_id" column="MERCHANT_ID"/>
+        <result property="merchant_name" column="MERCHANT_NAME"/>
+        <result property="merchant_shortname" column="MERCHANT_SHORTNAME"/>
+        <result property="service_phonr" column="SERVICE_PHONR"/>
+        <result property="contact" column="CONTACT"/>
+        <result property="contact_phone" column="CONTACT_PHONE"/>
+        <result property="contact_email" column="CONTACT_EMAIL"/>
+        <result property="channel_id" column="CHANNEL_ID"/>
+        <result property="business" column="BUSINESS"/>
+        <result property="merchant_remark" column="MERCHANT_REMARK"/>
+        <result property="sub_mch_id" column="SUB_MCH_ID"/>
+    </resultMap>
+
+
+        <sql id="WebchantMerchantBase_columns">
+             T.MERCHANT_ID,T.MERCHANT_NAME,T.MERCHANT_SHORTNAME,T.SERVICE_PHONR,T.CONTACT,T.CONTACT_PHONE,
+             T.CONTACT_EMAIL,T.CHANNEL_ID,T.BUSINESS,T.MERCHANT_REMARK,T.SUB_MCH_ID
+        </sql>
+
+        <insert id="WebchantMerchantBase_insert">
+
+         INSERT INTO WEBCHANT_MERCHANT_BASE (
+          MERCHANT_ID,MERCHANT_NAME,MERCHANT_SHORTNAME,SERVICE_PHONR,CHANNEL_ID,BUSINESS,MERCHANT_REMARK,SUB_MCH_ID)
+              VALUES (
+                  #{merchant_id jdbcType=VARCHAR} ,
+                  #{merchant_name jdbcType=VARCHAR} ,
+                  #{merchant_shortname jdbcType=VARCHAR} ,
+                  #{service_phonr jdbcType=VARCHAR} ,
+                  #{channel_id jdbcType=VARCHAR},
+                  #{business jdbcType=VARCHAR},
+                  #{merchant_remark jdbcType=VARCHAR},
+                  #{sub_mch_id jdbcType=VARCHAR}
+                  )
+        </insert>
+
+        <update id="WebchantMerchantBase_update">
+            UPDATE webchant_merchant_base SET
+                MERCHANT_NAME	= #{merchant_name,jdbcType=VARCHAR} ,
+                MERCHANT_SHORTNAME = #{merchant_shortname,jdbcType=VARCHAR} ,
+                SERVICE_PHONR = #{service_phonr,jdbcType=VARCHAR} ,
+                CONTACT = #{contact,jdbcType=VARCHAR},
+                CONTACT_PHONE = #{contact_phone,jdbcType=VARCHAR} ,
+                CONTACT_EMAIL = #{contact_email,jdbcType=VARCHAR},
+                CHANNEL_ID = #{channel_id,jdbcType=VARCHAR},
+                BUSINESS = #{business,jdbcType=VARCHAR},
+                MERCHANT_REMARK = #{merchant_remark,jdbcType=VARCHAR},
+                SUB_MCH_ID = #{sub_mch_id,jdbcType=VARCHAR}
+                WHERE
+                MERCHANT_ID = #{merchant_id,jdbcType=VARCHAR}
+        </update>
+        <delete id="WebchantMerchantBase_delete">
+            DELETE FROM webchant_merchant_base WHERE
+            MERCHANT_ID = #{merchant_id,jdbcType=VARCHAR}
+        </delete>
+
+        <select id="WebchantMerchantBase_getById" resultMap="WebchantMerchantBase">
+            SELECT
+            <include refid="WebchantMerchantBase_columns"/>
+            FROM webchant_merchant_base T
+            WHERE
+            MERCHANT_ID = #{merchant_id,jdbcType=VARCHAR}
+       </select>
+
+         <select id="WebchantMerchantBase_findCountByWhere" resultType="int">
+            SELECT count(*) FROM webchant_merchant_base T
+         </select>
+
+        <select id="WebchantMerchantBase_findListByWhere" resultMap="WebchantMerchantBase">
+            SELECT
+            <include refid="WebchantMerchantBase_columns"/>
+            FROM webchant_merchant_base T
+         </select>
+
+</mapper>
+

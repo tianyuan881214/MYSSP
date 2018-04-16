@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+"http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+
+<mapper namespace="com.yada.ssp.dao.FeeTableDao">
+
+	<resultMap id="FeeTable" type="com.yada.ssp.model.FeeTable">
+		<id property="feeId" column="FEE_ID" />
+		<result property="fee" column="FEE" />
+		<result property="feeSm" column="FEE_INSTRUCTION" />
+		<collection property="merchantBusinesses" ofType="com.yada.ssp.model.MerchantBusiness">
+			<id property="feeTable" column="FEE_ID"/>
+			<result property="paymerchantBases" column="MERCHAND_ID"/>
+			<result property="businessBase" column="BUSINESS_ID"/>
+		</collection>
+	</resultMap>
+
+	<sql id="FeeTable_columns">
+		T.FEE_ID,
+		T.FEE,
+		T.FEE_INSTRUCTION
+	</sql>
+
+
+
+	<insert id="FeeTable_insert" parameterType="com.yada.ssp.model.FeeTable">
+		
+    <![CDATA[
+		insert into FEE_LS
+		 (FEE_ID,
+		 FEE,
+		 FEE_INSTRUCTION)  
+		   values 
+		 (#{feeId,jdbcType=VARCHAR},
+		 #{fee,jdbcType=VARCHAR},
+		 #{feeSm,jdbcType=VARCHAR})
+		]]>
+	</insert>
+
+	<update id="FeeTable_update" parameterType="com.yada.ssp.model.FeeTable">
+		update
+		FEE_LS set
+		FEE_ID=#{feeId,jdbcType=VARCHAR},
+		FEE=#{fee,jdbcType=VARCHAR},
+		FEE_INSTRUCTION=#{feeSm,jdbcType=VARCHAR}
+		where
+		FEE_ID=#{feeId,jdbcType=VARCHAR}
+	</update>
+
+	<delete id="FeeTable_delete">
+		delete from FEE_LS where FEE_ID=#{feeId}
+	</delete>
+
+	<select id="FeeTable_getById" resultMap="FeeTable">
+		SELECT
+		<include refid="FeeTable_columns" />
+		FROM FEE_LS T
+		WHERE T.FEE_ID=#{feeId}
+	</select>
+	<select id="FeeTanle_getfeeId" resultType="String">
+		select lpad(SEQ_FEE_TABLE.NEXTVAL,15,'0') AS feeId FROM DUAL
+	</select>
+	<!-- <select id="FeeTable_getFeeTableByCustomerNo" resultMap="FeeTable"> 
+		SELECT <include refid="FeeTable_columns" /> FROM FeeTable T 
+		RIGHT JOIN CUSTOMER_FeeTable C ON C.FeeTable_ID = T.FeeTable_ID 
+		WHERE C.CERTIFICATE_NO = #{certificateNo} AND C.CERTIFICATE_TYPE = #{certificateTypeId} 
+		AND T.STATE = '1' AND T.START_DATE &lt;= #{nowDate} AND T.END_DATE &gt;= 
+		#{nowDate} and C.IS_JOIN='1' </select> <select id="FeeTable_getFeeTableByCustomerNoAndProductId" 
+		resultMap="FeeTable"> SELECT <include refid="FeeTable_columns" 
+		/> FROM CUSTOMER_FeeTable C LEFT JOIN FeeTable T ON C.FeeTable_ID 
+		= T.FeeTable_ID LEFT JOIN FeeTable_PRODUCT_ENJOY E ON C.FeeTable_ID 
+		= E.FeeTable_ID WHERE C.CERTIFICATE_NO = #{certificateNo} AND C.CERTIFICATE_TYPE 
+		= #{certificateTypeId} AND T.STATE = '1' AND E.PRODUCT_ID = #{productId} 
+		</select> <select id="FeeTable_getMersByMerName" resultMap="FeeTableEnjoyNameGroup"> 
+		select MER_NAME,MER_NO from FeeTable_ENJOY where MER_NAME like '%'||#{merName}||'%' 
+		</select> -->
+
+	<sql id="FeeTable_findPage_where">
+		<where>
+			<if test="feeId != null and feeId !=''">
+				AND T.FEE_ID=#{feeId}
+			</if>
+
+			<if test="fee != null and fee !=''">
+				AND T.FEE=#{fee}
+			</if>
+
+		<!--	<if test="accountNo != null and accountNo !=''">
+				AND T.ACCOUNT_NO=#{accountNo}
+			</if>
+			<if test="contactPerson != null and contactPerson !=''">
+				AND T.CONTACT_PERSON like '%'||#{contactPerson}||'%'
+			</if>
+
+			<if test="servicePhone != null and servicePhone !=''">
+				AND T.SERVICE_PHONE=#{servicePhone}
+			</if>
+			 <if test="FeeTableName != null and FeeTableName !=''"> 
+				AND T.FeeTable_NAME like '%'||#{FeeTableName}||'%' </if> <if 
+				test="startDate != null and startDate !=''"> AND T.START_DATE &gt;= #{startDate} 
+				</if> <if test="endDate != null and endDate !=''"> AND T.END_DATE &lt;= #{endDate} 
+				</if> <if test="remark != null and remark !=''"> AND T.REMARK = #{remark} 
+				</if> <if test="giftCount != null and giftCount !=''"> AND T.GIFT_COUNT = 
+				#{giftCount} </if> <if test="clientPrompt != null and clientPrompt !=''"> 
+				AND T.CLIENT_PROMPT = #{clientPrompt} </if> <if test="state != null and state 
+				!=''"> AND T.STATE = #{state} </if> -->
+		</where>
+	</sql>
+
+	<select id="FeeTable_findCountByWhere" resultType="int">
+		SELECT count(*) FROM FEE_LS T
+		<include refid="FeeTable_findPage_where" />
+	</select>
+
+
+	<select id="FeeTable_findListByWhere" resultMap="FeeTable">
+		SELECT
+		<include refid="FeeTable_columns" />
+		FROM FEE_LS T
+		<include refid="FeeTable_findPage_where" />
+		ORDER BY T.FEE_ID DESC
+	</select>
+</mapper>
+

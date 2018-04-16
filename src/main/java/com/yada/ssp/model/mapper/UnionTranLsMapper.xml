@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+        "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+
+<mapper namespace="com.yada.ssp.dao.UnionTranLsDao">
+
+    <resultMap id="UnionTranLs" type="com.yada.ssp.model.UnionTranLs">
+        <result property="merId" column="MERID"/>
+        <result property="orderId" column="ORDERID"/>
+        <result property="queryId" column="QUERYID"/>
+        <result property="traceTime" column="TRACETIME"/>
+        <result property="accNo" column="ACCNO"/>
+        <result property="txNamt" column="TXNAMT"/>
+        <result property="firstName" column="FIRST_Name"/>
+        <result property="secondName" column="SECOND_NAME"/>
+        <result property="state" column="STATE"/>
+        <result property="merchantCname" column="MERCHANT_CNAME"/>
+        <result property="orgId" column="ORG_ID"/>
+    </resultMap>
+
+    <sql id="UnionTranLs_columns">
+       TMP.MERID,--商户号
+        TMP.ORDERID, -- 订单号
+        TMP.QUERYID ， -- 流水号
+        TMP.TRACETIME  , -- 交易时间
+        TMP.ACCNO, -- 交易账号
+        TMP.TXNAMT, -- 交易金额
+        O.NAME as  FIRST_Name ,--所属机构
+        O.NAME as  SECOND_NAME, -- 二级机构
+        M.STATE, -- 商户状态
+        M.MERCHANT_CNAME， -- 商户名称,
+        O.ORG_ID
+    </sql>
+
+
+    <sql id="UnionTranLs_findPage_where">
+        <where>
+            <if test="merId != null and merId!=''">
+                AND TMP.MERID=#{merId}
+            </if>
+            <if test="finishDateTimeBegin != null and finishDateTimeBegin !=''">
+                AND TMP.TRACETIME &gt;= #{finishDateTimeBegin}
+            </if>
+            <if test="finishDateTimeEnd != null and finishDateTimeEnd !=''">
+                AND TMP.TRACETIME &lt;= #{finishDateTimeEnd}
+            </if>
+            <if test="orderId != null and orderId !=''">
+                AND TMP.ORDERID = #{orderId}
+            </if>
+            <if test="merchantCname != null and merchantCname !=''">
+                AND TMP.MERCHANT_CNAME  like  '%'||#{merchantCname}||'%'
+            </if>
+            <if test="firstName != null and firstName !=''">
+                AND O.FIRST_Name  like  '%'||#{firstName}||'%'
+            </if>
+        </where>
+    </sql>
+
+    <select id="UnionTranLs_findCountByWhere" resultType="int">
+        select
+        COUNT (0)
+        FROM UNION_TRAN_LS TMP
+        left JOIN MERCHANT_BASE M ON tmp.merid   = M.MERCHANT_ID
+        left JOIN T_B_ORG O ON M.ZBANK = O.ORG_ID and m.belong_org_id=O.bank_no
+        AND o.ORG_ID in (select o.org_id from t_b_org o start with o.org_id=#{orgId} connect by o.p_org_id=prior o.org_id)
+        <include refid="UnionTranLs_findPage_where"/>
+    </select>
+
+    <select id="UnionTranLs_findListByWhere" resultMap="UnionTranLs">
+        select
+        <include refid="UnionTranLs_columns"/>
+        FROM UNION_TRAN_LS TMP
+        left JOIN MERCHANT_BASE M ON tmp.merid   = M.MERCHANT_ID
+        left JOIN T_B_ORG O ON M.ZBANK = O.ORG_ID and m.belong_org_id=O.bank_no
+        AND o.ORG_ID in (select o.org_id from t_b_org o start with o.org_id=#{orgId} connect by o.p_org_id=prior o.org_id)
+        <include refid="UnionTranLs_findPage_where"/>
+    </select>
+
+</mapper>
+

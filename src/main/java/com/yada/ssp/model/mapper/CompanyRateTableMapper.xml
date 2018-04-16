@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+		PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+		"http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+<mapper namespace="com.yada.ssp.dao.CompanyRateTableDao">
+
+	<resultMap id="CompanyRateTable" type="com.yada.ssp.model.CompanyRateTable">
+		<id property="companyId" column="COMPANY_ID" />
+		<result property="rate" column="RATE" />
+		<result property="companyDescription" column="COMPANY_DESCRIPTION" />
+	</resultMap>
+
+	<sql id="CompanyRateTable_columns">
+		T.COMPANY_ID,
+		T.RATE,
+		T.COMPANY_DESCRIPTION
+	</sql>
+
+	<insert id="CompanyRateTable_insert">
+		INSERT INTO COMPANY_RATE_LS (
+		COMPANY_ID,
+		 RATE,
+		 COMPANY_DESCRIPTION
+		) VALUES (
+		 #{companyId,jdbcType=VARCHAR},
+		 #{rate,jdbcType=VARCHAR},
+		 #{companyDescription,jdbcType=VARCHAR}
+		)
+	</insert>
+
+	<update id="CompanyRateTable_update" parameterType="com.yada.ssp.model.CompanyRateTable">
+       update
+		COMPANY_RATE_LS set
+		RATE=#{rate,jdbcType=VARCHAR},
+		COMPANY_DESCRIPTION=#{companyDescription,jdbcType=VARCHAR}
+		where
+		COMPANY_ID=#{companyId,jdbcType=VARCHAR}
+	</update>
+
+	<delete id="CompanyRateTable_delete">
+		<![CDATA[
+        DELETE FROM COMPANY_RATE_LS WHERE
+        COMPANY_ID = #{companyId}
+        ]]>
+	</delete>
+
+	<sql id="CompanyRateTable_findPage_where">
+
+		<where>
+			<if test="companyId != null and companyId !=''">
+				AND T.COMPANY_ID=#{companyId}
+			</if>
+			<if test="rate != null and rate !=''">
+				AND T.RATE=#{rate}
+			</if>
+		</where>
+	</sql>
+
+	<select id="CompanyRateTable_findCountByWhere" resultType="int">
+		SELECT count(*) FROM COMPANY_RATE_LS T
+		<include refid="CompanyRateTable_findPage_where" />
+	</select>
+
+	<select id="CompanyRateTable_findListByWhere" resultMap="CompanyRateTable">
+		SELECT
+		<include refid="CompanyRateTable_columns" />
+		FROM COMPANY_RATE_LS T
+		<include refid="CompanyRateTable_findPage_where" />
+	</select>
+
+	<select id="CompanyRateTable_getById" resultMap="CompanyRateTable">
+		SELECT
+		<include refid="CompanyRateTable_columns"/>
+		FROM COMPANY_RATE_LS T
+		WHERE T.COMPANY_ID = #{companyId}
+	</select>
+</mapper>
+

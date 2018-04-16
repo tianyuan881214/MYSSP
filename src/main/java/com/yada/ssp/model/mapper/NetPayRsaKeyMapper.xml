@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+        "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+
+
+<mapper namespace="com.yada.ssp.dao.NetPayRsaKeyDao">
+
+    <resultMap id="NetPayRsaKey" type="com.yada.ssp.model.NetPayRsaKey">
+        <result property="keyVer" column="KEYVER"/>
+        <result property="publicE" column="PUBLICE"/>
+        <result property="publicM" column="PUBLICM"/>
+        <result property="privateD" column="PRIVATED"/>
+        <result property="privateM" column="PRIVATEM"/>
+    </resultMap>
+
+
+    <sql id="NetPayRsaKey_columns">
+        T.KEYVER,T.PUBLICE,T.PUBLICM,T.PRIVATED,T.PRIVATEM
+    </sql>
+
+    <insert id="NetPayRsaKey_insert">
+        INSERT INTO NETPAY_RSAKEY T(
+        T.KEYVER,T.PUBLICE,T.PUBLICM,T.PRIVATED,T.PRIVATEM
+        ) VALUES (
+        #{keyVer,jdbcType=VARCHAR},#{publicE,jdbcType=VARCHAR},#{publicM,jdbcType=VARCHAR},#{privateD,jdbcType=VARCHAR},#{privateM,jdbcType=VARCHAR})
+    </insert>
+
+    <delete id="NetPayRsaKey_delete">
+        DELETE FROM NETPAY_RSAKEY WHERE KEYVER=#{keyVer,jdbcType=VARCHAR}
+    </delete>
+
+    <select id="NetPayRsaKey_getById" resultMap="NetPayRsaKey">
+        SELECT
+        <include refid="NetPayRsaKey_columns"/>
+        FROM NETPAY_RSAKEY T
+        WHERE
+        T.KEYVER = #{keyVer}
+    </select>
+
+    <select id="NetPayRsaKey_findByMaxKeyVersion" resultType="java.lang.String">
+        SELECT
+        MAX (KEYVER)
+        FROM NETPAY_RSAKEY
+    </select>
+
+    <sql id="NetPayRsaKey_findPage_where">
+
+        <where>
+        </where>
+    </sql>
+
+    <select id="NetPayRsaKey_findCountByWhere" resultType="int">
+        SELECT count(*) FROM NETPAY_RSAKEY T
+        <include refid="NetPayRsaKey_findPage_where"/>
+    </select>
+
+
+    <select id="NetPayRsaKey_findListByWhere" resultMap="NetPayRsaKey">
+        SELECT
+        <include refid="NetPayRsaKey_columns"/>
+        FROM NETPAY_RSAKEY T
+        <include refid="NetPayRsaKey_findPage_where"/>
+    </select>
+
+</mapper>
+

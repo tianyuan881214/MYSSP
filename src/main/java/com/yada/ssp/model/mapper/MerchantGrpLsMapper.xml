@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+        "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+
+
+<mapper namespace="com.yada.ssp.dao.MerchantGrpLsDao">
+    <resultMap id="MerchantGrpLs" type="com.yada.ssp.model.MerchantGrpLs">
+        <result property="merGrpId" column="MER_GRP_ID"/>
+        <result property="merGrpName" column="MER_GRP_NAME"/>
+        <result property="merchantName" column="MERCHANT_CNAME"/>
+        <result property="abbrName" column="ABBR_CNAME"/>
+        <result property="addressChn" column="ADDRESS_CHN"/>
+        <result property="cityName" column="CITY_CNAME"/>
+        <result property="telephone" column="TELEPHONE"/>
+        <result property="postCode" column="POST_CODE"/>
+        <result property="fax" column="FAX"/>
+        <result property="manager" column="MANAGER"/>
+        <result property="zbank" column="ZBANK"/>
+        <result property="lockMode" column="LOCK_MODE"/>
+        <result property="settleMode" column="SETTLE_MODE"/>
+        <result property="updateOper" column="UPDATE_OPER"/>
+        <result property="updateDate" column="UPDATE_DATE"/>
+        <result property="updateTime" column="UPDATE_TIME"/>
+        <result property="accountNo" column="ACCOUNT_NO"/>
+        <result property="accountName" column="ACCOUNT_NAME"/>
+        <result property="openingBank" column="OPENING_BANK"/>
+        <result property="openingBankNo" column="OPENING_BANK_NO"/>
+        <result property="openingBankAddress" column="OPENING_BANK_ADDRESS"/>
+        <result property="cardHolderName" column="CARDHOLDER_NAME"/>
+        <result property="cardHolderMobile" column="CARDHOLDER_MOVEIPHONE"/>
+        <result property="cardHolderTelephone" column="CARDHOLDER_TELEPHONE"/>
+        <result property="idCard" column="ID_CARD"/>
+        <result property="memo" column="MEMO"/>
+
+    </resultMap>
+
+
+    <sql id="MerchantGrpLs_columns">
+          T.MER_GRP_ID,T.MER_GRP_NAME,T.MERCHANT_CNAME,T.ABBR_CNAME,T.ADDRESS_CHN,T.CITY_CNAME,T.TELEPHONE,T.POST_CODE,
+          T.FAX,T.MANAGER,T.ZBANK,T.LOCK_MODE,T.SETTLE_MODE,T.UPDATE_OPER,T.UPDATE_DATE,T.UPDATE_TIME,T.ACCOUNT_NO,
+          T.ACCOUNT_NAME,T.OPENING_BANK,T.OPENING_BANK_NO,T.OPENING_BANK_ADDRESS,T.CARDHOLDER_NAME,T.CARDHOLDER_MOVEIPHONE,
+          T.CARDHOLDER_TELEPHONE,T.ID_CARD,T.MEMO
+    </sql>
+
+    <insert id="MerchantGrpLs_insert">
+   <!--     <selectKey resultType="java.lang.String" order="BEFORE" keyProperty="key-id">
+            SELECT SEQ_MER_GRP.nextval AS ID FROM DUAL
+        </selectKey>-->
+        INSERT INTO MERCHANT_GRP_LS T (
+        T.MER_GRP_ID,T.MER_GRP_NAME,T.MERCHANT_CNAME,T.ABBR_CNAME,T.ADDRESS_CHN,T.CITY_CNAME,T.TELEPHONE,T.POST_CODE,
+        T.FAX,T.MANAGER,T.ZBANK,T.LOCK_MODE,T.SETTLE_MODE,T.UPDATE_OPER,T.UPDATE_DATE,T.UPDATE_TIME,T.ACCOUNT_NO,
+        T.ACCOUNT_NAME,T.OPENING_BANK,T.OPENING_BANK_NO,T.OPENING_BANK_ADDRESS,T.CARDHOLDER_NAME,T.CARDHOLDER_MOVEIPHONE,
+        T.CARDHOLDER_TELEPHONE,T.ID_CARD,T.MEMO
+        ) VALUES (
+        #{merGrpId,jdbcType=VARCHAR},
+        #{merGrpName,jdbcType=VARCHAR},
+        #{merchantName,jdbcType=VARCHAR},
+        #{abbrName,jdbcType=VARCHAR},
+        #{addressChn,jdbcType=VARCHAR},
+        #{cityName,jdbcType=VARCHAR},
+        #{telephone,jdbcType=VARCHAR},
+        #{postCode,jdbcType=VARCHAR},
+        #{fax,jdbcType=VARCHAR},
+        #{manager,jdbcType=VARCHAR},
+        #{zbank,jdbcType=VARCHAR},
+        #{lockMode,jdbcType=VARCHAR},
+        #{settleMode,jdbcType=VARCHAR},
+        #{updateOper,jdbcType=VARCHAR},
+        #{updateDate,jdbcType=VARCHAR},
+        #{updateTime,jdbcType=VARCHAR},
+        #{accountNo,jdbcType=VARCHAR},
+        #{accountName,jdbcType=VARCHAR},
+        #{openingBank,jdbcType=VARCHAR},
+        #{openingBankNo,jdbcType=VARCHAR},
+        #{openingBankAddress,jdbcType=VARCHAR},
+        #{cardHolderName,jdbcType=VARCHAR},
+        #{cardHolderMobile,jdbcType=VARCHAR},
+        #{cardHolderTelephone,jdbcType=VARCHAR},
+        #{idCard,jdbcType=VARCHAR},
+        #{memo,jdbcType=VARCHAR}
+        )
+    </insert>
+
+    <update id="MerchantGrpLs_update" parameterType="com.yada.ssp.model.MerchantGrpLs">
+        <![CDATA[
+            UPDATE MERCHANT_GRP_LS SET
+                MER_GRP_NAME =#{merGrpName,jdbcType=VARCHAR},
+                MERCHANT_CNAME =#{merchantName,jdbcType=VARCHAR},
+                ABBR_CNAME =#{abbrName,jdbcType=VARCHAR},
+                ADDRESS_CHN =#{addressChn,jdbcType=VARCHAR},
+                CITY_CNAME =#{cityName,jdbcType=VARCHAR},
+                TELEPHONE =#{telephone,jdbcType=VARCHAR},
+                POST_CODE =#{postCode,jdbcType=VARCHAR},
+                FAX =#{fax,jdbcType=VARCHAR},
+                MANAGER =#{manager,jdbcType=VARCHAR},
+                ZBANK =#{zbank,jdbcType=VARCHAR},
+                LOCK_MODE =#{lockMode,jdbcType=VARCHAR},
+                SETTLE_MODE =#{settleMode,jdbcType=VARCHAR},
+                UPDATE_OPER =#{updateOper,jdbcType=VARCHAR},
+                UPDATE_DATE =#{updateDate,jdbcType=VARCHAR},
+                UPDATE_TIME =#{updateTime,jdbcType=VARCHAR},
+                ACCOUNT_NO =#{accountNo,jdbcType=VARCHAR},
+                ACCOUNT_NAME =#{accountName,jdbcType=VARCHAR},
+                OPENING_BANK =#{openingBank,jdbcType=VARCHAR},
+                OPENING_BANK_NO =#{openingBankNo,jdbcType=VARCHAR},
+                OPENING_BANK_ADDRESS =#{openingBankAddress,jdbcType=VARCHAR},
+                CARDHOLDER_NAME =#{cardHolderName,jdbcType=VARCHAR},
+                CARDHOLDER_MOVEIPHONE =#{cardHolderMobile,jdbcType=VARCHAR},
+                CARDHOLDER_TELEPHONE =#{cardHolderTelephone,jdbcType=VARCHAR},
+                ID_CARD =#{idCard,jdbcType=VARCHAR},
+                MEMO =#{memo,jdbcType=VARCHAR}
+                WHERE
+                MER_GRP_ID = #{merGrpId,jdbcType=VARCHAR}
+        ]]>
+    </update>
+
+
+    <select id="MerchantGrpLs_getById" resultMap="MerchantGrpLs">
+        SELECT
+        <include refid="MerchantGrpLs_columns"/>
+        FROM MERCHANT_GRP_LS T
+        WHERE
+        T.MER_GRP_ID = #{merGrpId,jdbcType=VARCHAR}
+    </select>
+
+    <delete id="MerchantGrpLs_delete">
+        <![CDATA[
+        DELETE FROM MERCHANT_GRP_LS WHERE
+        MER_GRP_ID = #{merGrpId,jdbcType=VARCHAR}
+    ]]>
+    </delete>
+
+    <sql id="MerchantGrpLs_findPage_where">
+
+        <where>
+            <if test="merGrpName != null and merGrpName !=''">
+                AND T.MER_GRP_NAME=#{merGrpName}
+            </if>
+            <if test="lockMode != null and lockMode !=''">
+                AND T.LOCK_MODE=#{lockMode}
+            </if>
+        </where>
+    </sql>
+
+    <select id="MerchantGrpLs_findCountByWhere" resultType="int">
+        SELECT count(*) FROM MERCHANT_GRP_LS T
+        <include refid="MerchantGrpLs_findPage_where"/>
+    </select>
+
+
+    <select id="MerchantGrpLs_findListByWhere" resultMap="MerchantGrpLs">
+        SELECT
+        <include refid="MerchantGrpLs_columns"/>
+        FROM MERCHANT_GRP_LS T
+        <include refid="MerchantGrpLs_findPage_where"/>
+    </select>
+
+</mapper>
+

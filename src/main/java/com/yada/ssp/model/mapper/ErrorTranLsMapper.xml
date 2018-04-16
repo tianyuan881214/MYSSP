@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+        "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+
+
+<mapper namespace="com.yada.ssp.dao.ErrorTranLsDao">
+    <resultMap id="ErrorTranLs" type="com.yada.ssp.model.ErrorTranLs">
+        <result property="id" column = "ID"/>
+        <result property="tranSources" column = "TRAN_SOURCES"/>
+        <result property="accountRelation" column = "ACCOUNT_RELATION"/>
+        <result property="errorCause" column = "ERROR_CAUSE"/>
+        <result property="tranNo" column = "TRAN_NO"/>
+        <result property="tranType" column = "TRAN_TYPR"/>
+        <result property="tranDate" column = "TRAN_DATE"/>
+        <result property="tranTime" column = "TRAN_TIME"/>
+        <result property="cardNo" column = "CARD_NO"/>
+        <result property="merchantId" column = "MERCHNAT_ID"/>
+        <result property="terminalNo" column = "TEMINAL_NO"/>
+        <result property="terminalLsNo" column = "TEMINAL_LS_NO"/>
+        <result property="tranAmt" column = "TRAN_AMT"/>
+        <result property="batchNo" column = "BATCH_NO"/>
+        <result property="operNo" column = "OPER_NO"/>
+        <result property="refundNo" column = "REFUND_NO"/>
+        <result property="authNo" column = "AUTH_NO"/>
+        <result property="tranCode" column = "TRAN_CODE"/>
+        <result property="referenceNo" column = "REFERENCE_NO"/>
+        <result property="orgId" column="ORG_ID"/>
+        <result property="pOrgId" column="P_ORG_ID"/>
+        <result property="orgLev" column="ORG_LEV"/>
+    </resultMap>
+
+    <sql id="ErrorTranLs_columns">
+        T.ID,
+        T.TRAN_SOURCES,
+        T.ACCOUNT_RELATION,
+        T.ERROR_CAUSE,
+        T.TRAN_NO,
+        T.TRAN_TYPR,
+        T.TRAN_DATE,
+        T.TRAN_TIME,
+        T.CARD_NO,
+        T.MERCHNAT_ID,
+        T.TEMINAL_NO,
+        T.TEMINAL_LS_NO,
+        T.TRAN_AMT,
+        T.BATCH_NO,
+        T.OPER_NO,
+        T.REFUND_NO,
+        T.AUTH_NO,
+        T.TRAN_CODE,
+        T.REFERENCE_NO
+    </sql>
+
+    <select id="ErrorTranLs_getById" resultMap="ErrorTranLs">
+        SELECT
+        <include refid="ErrorTranLs_columns"/>
+        FROM ERROR_TRAN_LS T
+        WHERE
+        T.ID = #{id}
+    </select>
+
+    <sql id="ErrorTranLs_findPage_where">
+
+        <where>
+            <if test="tranSources != null and tranSources !=''">
+                AND T.TRAN_SOURCES=#{tranSources}
+            </if>
+            <if test="merchantId != null and merchantId !=''">
+                AND T.MERCHNAT_ID=#{merchantId}
+            </if>
+            <if test="accountRelation != null and accountRelation !=''">
+                AND T.ACCOUNT_RELATION=#{accountRelation}
+            </if>
+            <if test="errorCause != null and errorCause !=''">
+                AND T.ERROR_CAUSE=#{errorCause}
+            </if>
+            <if test="tranDateTimeBegin != null and tranDateTimeBegin !=''">
+                AND T.TRAN_DATE &gt;= #{tranDateTimeBegin} 
+            </if>
+            <if test="tranDateTimeEnd != null and tranDateTimeEnd !=''">
+                AND T.TRAN_DATE &lt;= #{tranDateTimeEnd}
+            </if>
+        </where>
+    </sql>
+
+    <select id="ErrorTranLs_findCountByWhere" resultType="int">
+        SELECT count(*) FROM ERROR_TRAN_LS T
+        <include refid="ErrorTranLs_findPage_where"/>
+    </select>
+
+
+    <select id="ErrorTranLs_findListByWhere" resultMap="ErrorTranLs">
+        SELECT
+        <include refid="ErrorTranLs_columns"/>
+        FROM ERROR_TRAN_LS T
+        join merchant_base m on m.merchant_id = t.merchnat_id
+        join T_B_ORG O ON m.ZBANK = O.ORG_ID
+        <include refid="ErrorTranLs_findPage_where"/>
+    </select>
+
+    <select id="ErrorTranLs_findAll" resultMap="ErrorTranLs">
+        SELECT
+        <include refid="ErrorTranLs_columns"/>
+        ,
+        o.org_id
+        FROM ERROR_TRAN_LS T
+        join merchant_base m on m.merchant_id = t.merchnat_id
+        join T_B_ORG O ON m.ZBANK = O.ORG_ID
+        <include refid="ErrorTranLs_findPage_where"/>
+    </select>
+
+</mapper>
+

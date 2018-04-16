@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+        "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+
+
+<mapper namespace="com.yada.ssp.dao.WebChatSettleLsDao">
+
+    <resultMap id="WebChatSettleLs" type="com.yada.ssp.model.WebChatSettleLs">
+        <result property="merchantId" column="MERCHANT_ID"/>
+        <result property="merchantCname" column="MERCHANT_CNAME"/>
+        <result property="subMerchantId" column="sub_merchant_id"/>
+        <result property="outTradeNo" column="out_trade_no"/>
+        <result property="firsetName" column="FIRST_NAME"/>
+        <result property="secondName" column="SECOND_NAME"/>
+        <result property="tranStart" column="tran_start"/>
+        <result property="totalAmount" column="TOTAL_AMOUNT"/>
+        <result property="amountFee" column="AMOUNT_FEE"/>
+        <result property="settleFee" column="SETTLE_FEE"/>
+        <result property="webFee" column="web_fee"/>
+        <result property="feeRate" column="fee_rate"/>
+        <result property="myFee" column="MY_FEE"/>
+        <result property="othFee" column="oth_fee"/>
+        <result property="gsFee" column="gs_fee"/>
+        <result property="accountType" column="account_type"/>
+        <result property="tranDate" column="tran_date"/>
+        <result property="settleDate" column="SETTLE_DATE"/>
+
+
+    </resultMap>
+
+    <sql id="WebChatSettleLs_columns">
+       mer.merchant_id ,
+        mer.merchant_cname,
+        ls. sub_merchant_id ,
+        ls.out_trade_no,
+        o.name  as FIRST_NAME,
+        org.name  as SECOND_NAME,
+        ls.tran_start ,
+        ls.total_amount ,
+        ls.amount_fee  ,
+        ls.total_amount - ls.amount_fee as SETTLE_FEE,
+        ls.fee as web_fee ,
+        ls.fee_rate,
+        ls.oth_fee,
+        ls.my_fee,
+        ls.gs_fee,
+        mer.account_type,
+        ls.tran_date,
+        ls.settle_date
+    </sql>
+
+
+    <sql id="WebChatSettleLs_findPage_where">
+
+        <where>
+            <if test="merchantId != null and merchantId !=''">
+                AND mer.MERCHANT_ID=#{merchantId}
+            </if>
+            <if test="finishDateTimeBegin != null and finishDateTimeBegin !=''">
+                AND ls.SETTLE_DATE &gt;= #{finishDateTimeBegin}
+            </if>
+            <if test="finishDateTimeEnd != null and finishDateTimeEnd !=''">
+                AND ls.SETTLE_DATE &lt;= #{finishDateTimeEnd}
+            </if>
+            <if test="merchantCname != null and merchantCname !=''">
+                AND mer.MERCHANT_CNAME like '%'||#{merchantCname}||'%'
+            </if>
+            <if test="orgId != null and orgId !=''">
+                AND o.ORG_ID like #{orgId}||'%'
+            </if>
+        </where>
+    </sql>
+
+    <select id="WebChatSettleLs_findCountByWhere" resultType="int">
+        select
+         COUNT (0)
+        from WEBCHAT_SETTLE_LS ls
+        left join WEBCHANT_MERCHANT_BASE base
+        on ls.sub_merchant_id = base.sub_mch_id
+        left join merchant_base mer
+        on mer.merchant_id = base.merchant_id
+        left join t_b_org o
+        on o.org_id = mer.zbank
+        left join t_b_org org
+        on mer.belong_org_id = org.org_id
+        <include refid="WebChatSettleLs_findPage_where"/>
+    </select>
+
+
+    <select id="WebChatSettleLs_findListByWhere" resultMap="WebChatSettleLs">
+        select
+        <include refid="WebChatSettleLs_columns"/>
+        from WEBCHAT_SETTLE_LS ls
+        left join WEBCHANT_MERCHANT_BASE base
+        on ls.sub_merchant_id = base.sub_mch_id
+        left join merchant_base mer
+        on mer.merchant_id = base.merchant_id
+        left join t_b_org o
+        on o.org_id = mer.zbank
+        left join t_b_org org
+        on mer.belong_org_id = org.org_id
+        <include refid="WebChatSettleLs_findPage_where"/>
+    </select>
+
+</mapper>
+

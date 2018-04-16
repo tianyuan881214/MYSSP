@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+        "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+
+<mapper namespace="com.yada.ssp.dao.PayTranAlipayLsDao">
+
+    <resultMap id="PayTranAlipayLs" type="com.yada.ssp.model.PayTranAlipayLs">
+        <result property="outTradeNo" column="OUT_TRADE_NO"/>
+        <result property="oldBatchNo" column="OLD_BATCHNO"/>
+        <result property="oldTraceNo" column="OLD_TRACENO"/>
+        <result property="oldTranDate" column="OLD_TRANDATE"/>
+        <result property="oldTranTime" column="OLD_TRANTIME"/>
+        <result property="oldOutTradeNo" column="OLD_OUT_TRADE_NO"/>
+        <result property="oldTerminalId" column="OLD_TERMINAL_ID"/>
+        <result property="oldTradeNo" column="OLD_TRADE_NO"/>
+        <result property="authCode" column="AUTH_CODE"/>
+        <result property="batchNo" column="BATCH_NO"/>
+        <result property="body" column="BODY"/>
+        <result property="buyerLoginId" column="BUYER_LOGON_ID"/>
+        <result property="buyerPayAmount" column="BUYER_PAY_AMOUNT"/>
+        <result property="buyerUserId" column="BUYER_USER_ID"/>
+        <result property="code" column="CODE"/>
+        <result property="discountableAmount" column="DISCOUNTABLE_AMOUNT"/>
+        <result property="fundBillListId" column="FUND_BILL_LIST_ID"/>
+        <result property="gmtPayment" column="GMT_PAYMENT"/>
+        <result property="goodsIds" column="GOODS_IDS"/>
+        <result property="invoiceAmount" column="INVOICE_AMOUNT"/>
+        <result property="lsFlag" column="LS_FLAG"/>
+        <result property="operatorId" column="OPERATOR_ID"/>
+        <result property="pointAmount" column="POINT_AMOUNT"/>
+        <result property="refundFlag" column="REFUND_FLAG"/>
+        <result property="royaltyInfoId" column="ROYALTY_INFO_ID"/>
+        <result property="scene" column="SCENE"/>
+        <result property="sellerId" column="SELLER_ID"/>
+        <result property="storeId" column="STORE_ID"/>
+        <result property="storeName" column="STORE_NAME"/>
+        <result property="subCode" column="SUB_CODE"/>
+        <result property="subject" column="SUBJECT"/>
+        <result property="sysServiceProviderId" column="SYS_SERVICE_PROVIDER_ID"/>
+        <result property="terminalId" column="TERMINAL_ID"/>
+        <result property="timeOutExpress" column="TIMEOUT_EXPRESS"/>
+        <result property="totalAmount" column="TOTAL_AMOUNT"/>
+        <result property="traceNo" column="TRACE_NO"/>
+        <result property="tradeNo" column="TRADE_NO"/>
+        <result property="tranDate" column="TRAN_DATE"/>
+        <result property="tranTime" column="TRAN_TIME"/>
+        <result property="tranType" column="TRAN_TYPE"/>
+        <result property="undiscountableAmount" column="UNDISCOUNTABLE_AMOUNT"/>
+        <result property="undoFlag" column="UNDO_FLAG"/>
+        <result property="name" column="NAME"/>
+        <result property="accountNo" column="ACCOUNT_NO"/>
+        <result property="inOrg" column="inOrg"/>
+    </resultMap>
+
+
+
+    <sql id="PayTranAlipayLs_columns">
+       T.OUT_TRADE_NO,
+       T.OLD_BATCHNO,
+       T.OLD_TRACENO,
+       T.OLD_TRANDATE,
+       T.OLD_TRANTIME,
+       T.OLD_OUT_TRADE_NO,
+       T.OLD_TERMINAL_ID,
+       T.OLD_TRADE_NO,
+       T.AUTH_CODE,
+       T.BATCH_NO,
+       T.BODY,
+       T.BUYER_LOGON_ID,
+       T.BUYER_PAY_AMOUNT,
+       T.BUYER_USER_ID,
+       T.CODE,
+       T.DISCOUNTABLE_AMOUNT,
+       T.FUND_BILL_LIST_ID,
+       T.GMT_PAYMENT,
+       T.GOODS_IDS,
+       T.INVOICE_AMOUNT,
+       T.LS_FLAG,
+       T.OPERATOR_ID,
+       T.POINT_AMOUNT,
+       T.REFUND_FLAG,
+       T.ROYALTY_INFO_ID,
+       T.SCENE,
+       T.SELLER_ID,
+       T.STORE_ID,
+       T.MERCHANT_CNAME as STORE_NAME,
+       T.SUB_CODE,
+       T.SUBJECT,
+       T.SYS_SERVICE_PROVIDER_ID,
+       T.TERMINAL_ID,
+       T.TIMEOUT_EXPRESS,
+       to_char(T.TOTAL_AMOUNT,'999999999990.99') as TOTAL_AMOUNT,
+       T.TRACE_NO,
+       T.TRADE_NO,
+       T.TRAN_DATE,
+       T.TRAN_TIME,
+       T.TRAN_TYPE,
+       T.UNDISCOUNTABLE_AMOUNT,
+       T.UNDO_FLAG,
+       T.ORG_ID,
+       T.NAME as inOrg
+    </sql>
+
+
+
+    <select id="PayTranAlipayLs_getById" resultMap="PayTranAlipayLs">
+        SELECT
+        <include refid="PayTranAlipayLs_columns"/>
+        FROM (
+        select *
+        from (select *
+        from (SELECT *
+        FROM ALIPAY_TRAN_LS
+        UNION ALL
+        SELECT *
+        FROM OLD_ALIPAY_TRAN_LS) un
+        JOIN MERCHANT_BASE M
+        ON un.STORE_ID = M.MERCHANT_ID
+        JOIN MERCHANT_ADD_INFO A
+        ON M.MERCHANT_ID = A.MERCHANT_ID
+        JOIN T_B_ORG O
+        ON M.ZBANK = O.ORG_ID) p
+        )T WHERE
+        T.OUT_TRADE_NO=#{outTradeNo,jdbcType=VARCHAR}
+    </select>
+
+    <sql id="PayTranAlipayLs_findPage_where">
+        <where>
+            <if test="storeId != null and storeId != ''">
+                AND  T.STORE_ID = #{storeId}
+            </if>
+            <if test="outTradeNo != null and outTradeNo != ''">
+                AND T.OUT_TRADE_NO = #{outTradeNo}
+            </if>
+            <if test="tradeNo != null and tradeNo != ''">
+                AND T.TRADE_NO = #{tradeNo}
+            </if>
+            <if test="buyerLoginId != null and buyerLoginId != ''">
+                AND T.BUYER_LOGON_ID = #{buyerLoginId}
+            </if>
+            <if test="accountNo != null and accountNo !=''">
+                AND T.ACCOUNT_NO=#{accountNo}
+            </if>
+            <if test="terminalId != null and terminalId !=''">
+                AND T.TERMINAL_ID=#{terminalId}
+            </if>
+            <!--<if test="orgId != null and orgId !=''">-->
+                <!--AND O.ORG_ID = #{orgId} OR O.P_ORG_ID = #{orgId})-->
+            <!--</if>-->
+            <!--<if test="pOrgId != null and pOrgId !=''">-->
+                <!--AND O.ORG_ID = #{pOrgId}-->
+            <!--</if>-->
+            <!--<if test="orgId != null and orgId !=''">-->
+                <!--AND T.ORG_ID = #{orgId}-->
+            <!--</if>-->
+            <if test="tranDateTimeBegin != null and tranDateTimeBegin !=''">
+                AND T.TRAN_DATE &gt;= #{tranDateTimeBegin}
+            </if>
+            <if test="tranDateTimeEnd != null and tranDateTimeEnd !=''">
+                AND T.TRAN_DATE &lt;= #{tranDateTimeEnd}
+            </if>
+            <if test="tranDate != null and tranDate !=''">
+                AND T.TRAN_DATE = #{tranDate}
+            </if>
+        </where>
+    </sql>
+
+    <select id="PayTranAlipayLs_findCountByWhere" resultType="int">
+            SELECT count(*) FROM
+            ( select *
+        from (select *
+        from (SELECT *
+        FROM ALIPAY_TRAN_LS
+        UNION ALL
+        SELECT *
+        FROM OLD_ALIPAY_TRAN_LS) un
+        JOIN MERCHANT_BASE M
+        ON un.STORE_ID = M.MERCHANT_ID
+        JOIN MERCHANT_ADD_INFO A
+        ON M.MERCHANT_ID = A.MERCHANT_ID
+        JOIN T_B_ORG O
+        ON M.ZBANK = O.ORG_ID) p
+        where p.ORG_ID in (select o.org_id from t_b_org o start with o.org_id=#{orgId} connect by o.p_org_id=prior o.org_id)
+            )T
+        <include refid="PayTranAlipayLs_findPage_where" />
+    </select>
+
+
+    <select id="PayTranAlipayLs_findListByWhere" resultMap="PayTranAlipayLs">
+        select
+        <include refid="PayTranAlipayLs_columns"/>
+        from (
+        select *
+        from (select *
+        from (SELECT *
+        FROM ALIPAY_TRAN_LS
+        UNION ALL
+        SELECT *
+        FROM OLD_ALIPAY_TRAN_LS) un
+        JOIN MERCHANT_BASE M
+        ON un.STORE_ID = M.MERCHANT_ID
+        JOIN MERCHANT_ADD_INFO A
+        ON M.MERCHANT_ID = A.MERCHANT_ID
+        JOIN T_B_ORG O
+        ON M.ZBANK = O.ORG_ID) p
+        where p.ORG_ID IN (select o.org_id from t_b_org o start with o.org_id=#{orgId} connect by o.p_org_id=prior o.org_id)
+        ) T
+        <include refid="PayTranAlipayLs_findPage_where" />
+        order by tran_date desc,tran_time desc
+    </select>
+</mapper>
+

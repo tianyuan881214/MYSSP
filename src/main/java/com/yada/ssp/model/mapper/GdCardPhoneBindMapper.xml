@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+"http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+
+<mapper namespace="com.yada.ssp.dao.GdCardPhoneBindDao">
+
+	<resultMap id="GdCardPhoneBind" type="com.yada.ssp.model.GdCardPhoneBind">
+		<result property="smartCard" column="SMART_CARD" />
+		<result property="bankCard" column="BANK_CARD" />
+		<result property="phoneNo" column="PHONE_NO" />
+		<result property="phoneCode" column="PHONE_CODE" />
+		<result property="userName" column="USER_NAME" />
+		<result property="validateFlag" column="VALIDATE_FLAG" />
+		<result property="statuFlag" column="STATU_FLAG" />
+		<result property="signDate" column="SIGN_DATE" />
+		<result property="signTime" column="SIGN_TIME" />
+	</resultMap>
+
+	<sql id="GdCardPhoneBind_columns">
+		T.SMART_CARD ,
+		T.BANK_CARD ,
+		T.PHONE_NO ,
+		T.PHONE_CODE ,
+		T.USER_NAME ,
+		T.VALIDATE_FLAG ,
+		T.STATU_FLAG ,
+		T.SIGN_DATE ,
+		T.SIGN_TIME 
+	</sql>
+
+	<insert id="GdCardPhoneBind_insert" parameterType="com.yada.ssp.model.GdCardPhoneBind">
+		<selectKey resultType="java.lang.String" order="BEFORE"
+			keyProperty="id">
+			SELECT T_SEQ_GD_CARD_PHONE_BIND.nextval AS ID FROM DUAL
+		</selectKey>
+    <![CDATA[
+		insert into GD_CARD_PHONE_BIND
+		 (SMART_CARD,BANK_CARD,PHONE_NO,PHONE_CODE,USER_NAME,VALIDATE_FLAG,STATU_FLAG,SIGN_DATE,SIGN_TIME)  
+		   values 
+		 (#{smartCard},#{bankCard},#{phoneNo},#{phoneCode},#{userName},#{validateFlag},#{statuFlag},#{signDate},#{signTime})
+		]]>
+	</insert>
+
+	<update id="GdCardPhoneBind_update" parameterType="com.yada.ssp.model.GdCardPhoneBind">
+		update GD_CARD_PHONE_BIND set 
+			   SMART_CARD=#{smartCard},
+			   BANK_CARD=#{bankCard},
+			   PHONE_NO=#{phoneNo},
+			   PHONE_CODE=#{phoneCode},
+			   USER_NAME=#{userName},
+			   VALIDATE_FLAG=#{validateFlag},
+			   STATU_FLAG=#{statuFlag},
+			   SIGN_DATE=#{signDate},
+			   SIGN_TIME=#{signTime}
+		where SMART_CARD=#{smartCard}
+	</update>
+
+	<delete id="GdCardPhoneBind_delete">
+		delete from GD_CARD_PHONE_BIND where SMART_CARD=#{smartCard}
+	</delete>
+
+	<select id="GdCardPhoneBind_getById" resultMap="GdCardPhoneBind">
+		SELECT
+		<include refid="GdCardPhoneBind_columns" />
+		FROM GD_CARD_PHONE_BIND T
+		WHERE T.SMART_CARD = #{smartCard}
+	</select>
+
+	<sql id="GdCardPhoneBind_findPage_where">
+		<where>
+			<if test="smartCard != null and smartCard !=''">
+				AND T.SMART_CARD = #{smartCard}
+			</if>
+			<if test="bankCard != null and bankCard !=''">
+				AND T.BANK_CARD = #{bankCard}
+			</if>
+			<if test="phoneNo != null and phoneNo !=''">
+				AND T.PHONE_NO = #{phoneNo}
+			</if>
+			<if test="phoneCode != null and phoneCode !=''">
+				AND T.PHONE_CODE = #{phoneCode}
+			</if>
+			<if test="userName != null and userName !=''">
+				AND T.USER_NAME = #{userName}
+			</if>
+			<if test="validateFlag != null and validateFlag !=''">
+				AND T.VALIDATE_FLAG = #{validateFlag}
+			</if>
+			<if test="statuFlag != null and statuFlag !=''">
+				AND T.STATU_FLAG = #{statuFlag}
+			</if>
+			<if test="signDate != null and signDate !=''">
+				AND T.SIGN_DATE = #{signDate}
+			</if>
+			<if test="signTime != null and signTime !=''">
+				AND T.SIGN_TIME = #{signTime}
+			</if>
+		</where>
+	</sql>
+
+	<select id="GdCardPhoneBind_findCountByWhere" resultType="int">
+		SELECT count(*) FROM GD_CARD_PHONE_BIND T
+		<include refid="GdCardPhoneBind_findPage_where" />
+	</select>
+
+
+	<select id="GdCardPhoneBind_findListByWhere" resultMap="GdCardPhoneBind">
+		SELECT
+		<include refid="GdCardPhoneBind_columns" />
+		FROM GD_CARD_PHONE_BIND T
+		<include refid="GdCardPhoneBind_findPage_where" />
+		ORDER BY T.SMART_CARD DESC
+	</select>
+</mapper>
+

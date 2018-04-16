@@ -1,0 +1,337 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+"http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+
+<mapper namespace="com.yada.ssp.dao.MerchantBusinessDao">
+
+	<resultMap id="MerchantBusiness" type="com.yada.ssp.model.MerchantBusiness">
+		<result property="paymerchantBases" column="MERCHAND_ID"/>
+		<result property="businessBase" column="BUSINESS_ID" />
+		<result property="feeTable" column="FEE_ID" />
+		<association property="merchantBase" javaType="com.yada.ssp.model.MerchantBase">
+			<id property="merchantId" column="MERCHANT_ID"/>
+			<result property="mcc" column="MCC"/>
+			<result property="merchantCname" column="MERCHANT_CNAME"/>
+			<result property="merchantEname" column="MERCHANT_ENAME"/>
+			<result property="abbrCname" column="ABBR_CNAME"/>
+			<result property="abbrEname" column="ABBR_ENAME"/>
+			<result property="addressChn" column="ADDRESS_CHN"/>
+			<result property="addressEng" column="ADDRESS_ENG"/>
+			<result property="cityCname" column="CITY_CNAME"/>
+			<result property="cityEname" column="CITY_ENAME"/>
+			<result property="telephone" column="TELEPHONE"/>
+			<result property="postCode" column="POST_CODE"/>
+			<result property="fax" column="FAX"/>
+			<result property="manager" column="MANAGER"/>
+			<result property="settleMerchId" column="SETTLE_MERCH_ID"/>
+			<result property="signBankId" column="SIGN_BANK_ID"/>
+			<result property="signHostId" column="SIGN_HOST_ID"/>
+			<result property="zbank" column="ZBANK"/>
+			<result property="ccyType" column="CCY_TYPE"/>
+			<result property="lockMode" column="LOCK_MODE"/>
+			<result property="signDate" column="SIGN_DATE"/>
+			<result property="merchantStat" column="MERCHANT_STAT"/>
+			<result property="settleMode" column="SETTLE_MODE"/>
+			<result property="updateOper" column="UPDATE_OPER"/>
+			<result property="updateDate" column="UPDATE_DATE"/>
+			<result property="updateTime" column="UPDATE_TIME"/>
+		</association>
+		<association property="businessBases" javaType="com.yada.ssp.model.BusinessBase">
+			<result property="businessId" column="BUSINESS_ID"/>
+			<result property="businessName" column="BUSINESS_NAME" />
+			<result property="businessSm" column="BUSINESS_INSTRUCTION" />
+		</association>
+		<association property="feeTables" javaType="com.yada.ssp.model.FeeTable">
+			<result property="feeId" column="FEE_ID" />
+			<result property="fee" column="FEE" />
+			<result property="feeSm" column="FEE_INSTRUCTION" />
+		</association>
+	</resultMap>
+	<!--<resultMap id="merchantBase" type="com.yada.ssp.model.MerchantBusiness" extends="MerchantBusiness">
+		<association property="merchantBase" javaType="com.yada.ssp.model.MerchantBase">
+			<result property="merchantId" column="MERCHANT_ID"/>
+			<result property="mcc" column="MCC"/>
+			<result property="merchantCname" column="MERCHANT_CNAME"/>
+			<result property="merchantEname" column="MERCHANT_ENAME"/>
+			<result property="abbrCname" column="ABBR_CNAME"/>
+			<result property="abbrEname" column="ABBR_ENAME"/>
+			<result property="addressChn" column="ADDRESS_CHN"/>
+			<result property="addressEng" column="ADDRESS_ENG"/>
+			<result property="cityCname" column="CITY_CNAME"/>
+			<result property="cityEname" column="CITY_ENAME"/>
+			<result property="telephone" column="TELEPHONE"/>
+			<result property="postCode" column="POST_CODE"/>
+			<result property="fax" column="FAX"/>
+			<result property="manager" column="MANAGER"/>
+			<result property="settleMerchId" column="SETTLE_MERCH_ID"/>
+			<result property="signBankId" column="SIGN_BANK_ID"/>
+			<result property="signHostId" column="SIGN_HOST_ID"/>
+			<result property="zbank" column="ZBANK"/>
+			<result property="ccyType" column="CCY_TYPE"/>
+			<result property="lockMode" column="LOCK_MODE"/>
+			<result property="signDate" column="SIGN_DATE"/>
+			<result property="merchantStat" column="MERCHANT_STAT"/>
+			<result property="settleMode" column="SETTLE_MODE"/>
+			<result property="updateOper" column="UPDATE_OPER"/>
+			<result property="updateDate" column="UPDATE_DATE"/>
+			<result property="updateTime" column="UPDATE_TIME"/>
+		</association>
+	</resultMap>
+	<resultMap id="businessBase" type="com.yada.ssp.model.MerchantBusiness" extends="MerchantBusiness">
+		<association property="businessBases" javaType="com.yada.ssp.model.BusinessBase">
+			<result property="businessId" column="BUSINESS_ID"/>
+			<result property="businessName" column="BUSINESS_NAME" />
+			<result property="businessSm" column="BUSINESS_INSTRUCTION" />
+		</association>
+	</resultMap>
+	<resultMap id="feeTable" type="com.yada.ssp.model.MerchantBusiness" extends="MerchantBusiness">
+		<association property="feeTables" javaType="com.yada.ssp.model.FeeTable">
+			<result property="feeId" column="FEE_ID" />
+			<result property="fee" column="FEE" />
+			<result property="feeSm" column="FEE_INSTRUCTION" />
+		</association>
+	</resultMap>-->
+
+	<sql id="FeeTable_columns">
+		F.FEE_ID,F.FEE,F.FEE_INSTRUCTION
+	</sql>
+
+	<sql id="BusinessBase_columns">
+		B.BUSINESS_ID,B.BUSINESS_NAME,B.BUSINESS_INSTRUCTION
+	</sql>
+
+	<sql id="MerchantBase_columns">
+		M.MERCHANT_ID,M.MCC,M.MERCHANT_CNAME,M.MERCHANT_ENAME,M.ABBR_CNAME,M.ABBR_ENAME,M.ADDRESS_CHN,M.ADDRESS_ENG,M.CITY_CNAME,
+		M.CITY_ENAME,M.TELEPHONE,M.POST_CODE,M.FAX,M.MANAGER,M.SETTLE_MERCH_ID,M.SIGN_BANK_ID,M.SIGN_HOST_ID,M.ZBANK,M.CCY_TYPE,
+		M.LOCK_MODE,M.SIGN_DATE,M.MERCHANT_STAT,M.SETTLE_MODE,M.UPDATE_OPER,M.UPDATE_DATE,M.UPDATE_TIME
+	</sql>
+
+	<sql id="MerchantBusiness_columns">
+		T.MERCHAND_ID,
+		T.BUSINESS_ID,
+		T.FEE_ID
+	</sql>
+
+
+
+	<insert id="MerchantBusiness_insert" parameterType="com.yada.ssp.model.MerchantBusiness">
+		
+    <![CDATA[
+		insert into merchant_business
+		 (MERCHAND_ID,
+		 BUSINESS_ID,
+		FEE_ID )  
+		   values 
+		 (#{paymerchantBases,jdbcType=VARCHAR},
+		 #{businessBase,jdbcType=VARCHAR},
+		 #{feeTable,jdbcType=VARCHAR})
+		]]>
+	</insert>
+
+	<update id="MerchantBusiness_update" parameterType="com.yada.ssp.model.MerchantBusiness">
+		update
+		merchant_business set
+		MERCHAND_ID=#{paymerchantBases,jdbcType=VARCHAR},
+		BUSINESS_ID=#{businessBase,jdbcType=VARCHAR},
+		FEE_ID=#{feeTable,jdbcType=VARCHAR})
+		where
+		MERCHAND_ID=#{paymerchantBases,jdbcType=VARCHAR}
+		and
+		BUSINESS_ID=#{businessBase,jdbcType=VARCHAR}
+	</update>
+
+	<delete id="MerchantBusiness_delete" parameterType="java.lang.String">
+		<![CDATA[
+			delete from merchant_business where MERCHAND_ID=#{paymerchantBases}
+		]]>
+	</delete>
+	<delete id="MerchantBusiness_MerchantId_delete" parameterType="java.lang.String">
+			delete from merchant_business t where t.MERCHAND_ID=#{paymerchantBases,jdbcType=CHAR}
+	</delete>
+	<select id="MerchantBusiness_getById" resultMap="MerchantBusiness">
+		SELECT
+		<include refid="MerchantBusiness_columns" />
+		FROM merchant_business T
+		WHERE
+		T.MERCHAND_ID=#{paymerchantBases,jdbcType=VARCHAR}
+		and
+		T.BUSINESS_ID=#{businessBase,jdbcType=VARCHAR}
+	</select>
+
+	<select id="MerchantBusiness_getByMerchantIdAndBusinessId" resultMap="MerchantBusiness">
+		SELECT
+		<include refid="MerchantBusiness_columns" />
+		FROM merchant_business T
+		WHERE
+		T.MERCHAND_ID=#{paymerchantBases,jdbcType=VARCHAR}
+		and
+		T.BUSINESS_ID=#{businessBase,jdbcType=VARCHAR}
+	</select>
+
+	<select id="MerchantBusiness_getMerchantId" resultMap="MerchantBusiness">
+		SELECT <include refid="MerchantBusiness_columns" /> FROM  MERCHANT_BUSINESS T WHERE T.MERCHAND_ID=#{paymerchantBases,jdbcType=VARCHAR}
+	</select>
+	
+	<!-- <select id="MerchantBusiness_getMerchantBusinessByCustomerNo" resultMap="MerchantBusiness"> 
+		SELECT <include refid="MerchantBusiness_columns" /> FROM MerchantBusiness T 
+		RIGHT JOIN CUSTOMER_MerchantBusiness C ON C.MerchantBusiness_ID = T.MerchantBusiness_ID 
+		WHERE C.CERTIFICATE_NO = #{certificateNo} AND C.CERTIFICATE_TYPE = #{certificateTypeId} 
+		AND T.STATE = '1' AND T.START_DATE &lt;= #{nowDate} AND T.END_DATE &gt;= 
+		#{nowDate} and C.IS_JOIN='1' </select> <select id="MerchantBusiness_getMerchantBusinessByCustomerNoAndProductId" 
+		resultMap="MerchantBusiness"> SELECT <include refid="MerchantBusiness_columns" 
+		/> FROM CUSTOMER_MerchantBusiness C LEFT JOIN MerchantBusiness T ON C.MerchantBusiness_ID 
+		= T.MerchantBusiness_ID LEFT JOIN MerchantBusiness_PRODUCT_ENJOY E ON C.MerchantBusiness_ID 
+		= E.MerchantBusiness_ID WHERE C.CERTIFICATE_NO = #{certificateNo} AND C.CERTIFICATE_TYPE 
+		= #{certificateTypeId} AND T.STATE = '1' AND E.PRODUCT_ID = #{productId} 
+		</select> <select id="MerchantBusiness_getMersByMerName" resultMap="MerchantBusinessEnjoyNameGroup"> 
+		select MER_NAME,MER_NO from MerchantBusiness_ENJOY where MER_NAME like '%'||#{merName}||'%' 
+		</select> -->
+
+	<sql id="MerchantBusiness_findPage_where">
+		<where>
+			<if test="paymerchantBases != null and paymerchantBases !=''">
+				AND T.MERCHAND_ID=#{paymerchantBases}
+			</if>
+			<if test="businessBase != null and businessBase !=''">
+				AND T.BUSINESS_ID=#{businessBase}
+			</if>
+			<if test="feeTable != null and feeTable !=''">
+				AND T.FEE_ID=#{feeTable}
+			</if>
+			<!--<if test="merchantId != null and merchantId !=''">
+				AND M.MERCHANT_ID = #{merchantId}
+			</if>
+			<if test="mcc != null and mcc !=''">
+				AND M.MCC = #{mcc}
+			</if>
+			<if test="merchantCname != null and merchantCname !=''">
+				AND M.MERCHANT_CNAME like '%'||#{merchantCname}||'%'
+			</if>
+			<if test="merchantEname != null and merchantEname !=''">
+				AND M.MERCHANT_ENAME like '%'||#{merchantEname}||'%'
+			</if>
+			<if test="abbrCname != null and abbrCname !=''">
+				AND M.ABBR_CNAME = #{abbrCname}
+			</if>
+			<if test="abbrEname != null and abbrEname !=''">
+				AND M.ABBR_ENAME = #{abbrEname}
+			</if>
+			<if test="addressChn != null and addressChn !=''">
+				AND M.ADDRESS_CHN = #{addressChn}
+			</if>
+			<if test="addressEng != null and addressEng !=''">
+				AND M.ADDRESS_ENG = #{addressEng}
+			</if>
+			<if test="cityCname != null and cityCname !=''">
+				AND M.CITY_CNAME = #{cityCname}
+			</if>
+			<if test="cityEname != null and cityEname !=''">
+				AND M.CITY_ENAME = #{cityEname}
+			</if>
+			<if test="telephone != null and telephone !=''">
+				AND M.TELEPHONE = #{telephone}
+			</if>
+			<if test="postCode != null and postCode !=''">
+				AND M.POST_CODE = #{postCode}
+			</if>
+			<if test="fax != null and fax !=''">
+				AND M.FAX = #{fax}
+			</if>
+			<if test="manager != null and manager !=''">
+				AND M.MANAGER = #{manager}
+			</if>
+			<if test="settleMerchId != null and settleMerchId !=''">
+				AND M.SETTLE_MERCH_ID = #{settleMerchId}
+			</if>
+			<if test="signBankId != null and signBankId !=''">
+				AND M.SIGN_Bank_ID = #{signBankId}
+			</if>
+			<if test="signHostId != null and signHostId !=''">
+
+				AND M.SIGN_Host_ID = #{signHostId}
+			</if>
+			<if test="zbank != null and zbank !=''">
+				AND M.ZBANK = #{zbank}
+			</if>
+			<if test="ccyType != null and ccyType !=''">
+				AND M.CCY_TYPE = #{ccyType}
+			</if>
+			<if test="lockMode != null and lockMode !=''">
+				AND M.LOCK_MODE = #{lockMode}
+			</if>
+			<if test="signDate != null and signDate !=''">
+				AND M.SIGN_DATE = #{signDate}
+			</if>
+			<if test="merchantStat != null and merchantStat !=''">
+				AND M.MERCHANT_STAT = #{merchantStat}
+			</if>
+			<if test="settleMode != null and settleMode !=''">
+				AND M.SETTLE_MODE = #{settleMode}
+			</if>
+			<if test="updateOper != null and updateOper !=''">
+				AND M.UPDATE_OPER = #{updateOper}
+			</if>
+			<if test="updateDate != null and updateDate !=''">
+				AND M.UPDATE_DATE = #{updateDate}
+			</if>
+			<if test="updateTime != null and updateTime !=''">
+				AND M.UPDATE_TIME = #{updateTime}
+			</if>-->
+
+			<!--<if test="accountNo != null and accountNo !=''">
+				AND T.ACCOUNT_NO=#{accountNo}
+			</if>
+			<if test="contactPerson != null and contactPerson !=''">
+				AND T.CONTACT_PERSON like '%'||#{contactPerson}||'%'
+			</if>
+
+			<if test="servicePhone != null and servicePhone !=''">
+				AND T.SERVICE_PHONE=#{servicePhone}
+			</if>
+			 <if test="MerchantBusinessName != null and MerchantBusinessName !=''"> 
+				AND T.MerchantBusiness_NAME like '%'||#{MerchantBusinessName}||'%' </if> <if 
+				test="startDate != null and startDate !=''"> AND T.START_DATE &gt;= #{startDate} 
+				</if> <if test="endDate != null and endDate !=''"> AND T.END_DATE &lt;= #{endDate} 
+				</if> <if test="remark != null and remark !=''"> AND T.REMARK = #{remark} 
+				</if> <if test="giftCount != null and giftCount !=''"> AND T.GIFT_COUNT = 
+				#{giftCount} </if> <if test="clientPrompt != null and clientPrompt !=''"> 
+				AND T.CLIENT_PROMPT = #{clientPrompt} </if> <if test="state != null and state 
+				!=''"> AND T.STATE = #{state} </if> -->
+		</where>
+	</sql>
+
+	<select id="MerchantBusiness_findCountByWhere" resultType="int">
+		SELECT count(*) FROM merchant_business T
+		JOIN MERCHANT_BASE M ON T.MERCHAND_ID=M.MERCHANT_ID
+		JOIN BUSINESS_BASE B ON T.BUSINESS_ID=B.BUSINESS_ID
+		JOIN FEE_LS F ON T.FEE_ID=F.FEE_ID
+		<!--<include refid="MerchantBusiness_findPage_where" />-->
+	</select>
+
+
+	<select id="MerchantBusiness_findListByWhere" resultMap="MerchantBusiness">
+		SELECT
+		<include refid="MerchantBase_columns" />,<include refid="BusinessBase_columns" />,<include refid="FeeTable_columns" />
+		FROM MERCHANT_BUSINESS T
+		JOIN MERCHANT_BASE M ON T.MERCHAND_ID=M.MERCHANT_ID
+		JOIN BUSINESS_BASE B ON T.BUSINESS_ID=B.BUSINESS_ID
+		JOIN FEE_LS F ON T.FEE_ID=F.FEE_ID
+
+	</select>
+
+	<select id="MerchantBusiness_findCountByWhere1" resultType="int">
+		SELECT count(*) FROM merchant_business T
+		<include refid="MerchantBusiness_findPage_where" />
+	</select>
+
+
+	<select id="MerchantBusiness_findListByWhere1" resultMap="MerchantBusiness">
+		SELECT
+		<include refid="MerchantBusiness_columns" />
+		FROM merchant_business T
+		<include refid="MerchantBusiness_findPage_where" />
+		ORDER BY T.BUSINESS_ID DESC
+	</select>
+</mapper>
+

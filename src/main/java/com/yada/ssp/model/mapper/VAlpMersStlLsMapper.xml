@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+        "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+
+
+<mapper namespace="com.yada.ssp.dao.VAlpMersStlLsDao">
+    <resultMap id="VAlpMersStlLs" type="com.yada.ssp.model.VAlpMersStlLs">
+        <result property="merchantId" column="MERCHANT_ID"/>
+        <result property="merchantCname" column="MERCHANT_CNAME"/>
+        <result property="terminalId" column="TERMINAL_ID"/>
+        <result property="batchNo" column="BATCH_NO"/>
+        <result property="oppositeId" column="OPPOSITE_ID"/>
+        <result property="tranDate" column="TRAN_DATE"/>
+        <result property="tranTime" column="TRAN_TIME"/>
+        <result property="tranAmt" column="TRAN_AMT"/>
+        <result property="tranFee" column="TRAN_FEE"/>
+        <result property="settleAmt" column="SETTLE_AMT"/>
+        <result property="authNo" column="AUTH_NO"/>
+        <result property="tranCode" column="TRAN_CODE"/>
+        <result property="fqqs" column="FQQS"/>
+        <result property="cardType" column="CARD_TYPE"/>
+        <result property="tradeNo" column="TRADE_NO"/>
+        <result property="settleDate" column="SETTLE_DATE"/>
+        <result property="accountNo" column="ACCOUNT_NO"/>
+        <result property="name" column="NAME"/>
+    </resultMap>
+
+    <sql id="VAlpMersStlLs_columns">
+        T.MERCHANT_ID,T.TERMINAL_ID,T.BATCH_NO,T.OPPOSITE_ID,T.TRAN_DATE,T.TRAN_TIME,T.TRAN_AMT,T.TRAN_FEE,T.SETTLE_AMT,
+        T.AUTH_NO,T.TRAN_CODE,T.FQQS,T.CARD_TYPE,T.TRADE_NO,T.SETTLE_DATE
+    </sql>
+
+    <sql id="VAlpMersStlLs_findPage_where">
+        <where>
+            <if test="merchantId != null and merchantId !=''">
+                AND T.MERCHANT_ID=#{merchantId}
+            </if>
+            <if test="terminalId != null and terminalId !=''">
+                AND T.TERMINAL_ID=#{terminalId}
+            </if>
+            <if test="accountNo != null and accountNo !=''">
+                AND A.ACCOUNT_NO=#{accountNo}
+            </if>
+            <if test="tranDateTimeBegin != null and tranDateTimeBegin !=''">
+                AND T.TRAN_DATE &gt;= #{tranDateTimeBegin}
+            </if>
+            <if test="tranDateTimeEnd != null and tranDateTimeEnd !=''">
+                AND T.TRAN_DATE &lt;= #{tranDateTimeEnd}
+            </if>
+            <if test="orgId != null and orgId !=''">
+                AND (O.ORG_ID = #{orgId} OR O.P_ORG_ID = #{orgId})
+            </if>
+            <if test="pOrgId != null and pOrgId !=''">
+                AND O.ORG_ID = #{pOrgId}
+            </if>
+        </where>
+    </sql>
+
+    <select id="VAlpMersStlLs_findCountByWhere" resultType="int">
+        SELECT count(*) FROM V_ALP_MERS_STL_LS T
+        JOIN MERCHANT_BASE M ON T.MERCHANT_ID = M.MERCHANT_ID
+        JOIN MERCHANT_ADD_INFO A ON T.MERCHANT_ID = A.MERCHANT_ID
+        JOIN T_B_ORG O ON M.ZBANK = O.ORG_ID
+        <include refid="VAlpMersStlLs_findPage_where"/>
+    </select>
+
+
+    <select id="VAlpMersStlLs_findListByWhere" resultMap="VAlpMersStlLs">
+        SELECT
+        <include refid="VAlpMersStlLs_columns"/>,O.NAME AS NAME,M.MERCHANT_CNAME AS MERCHANT_CNAME,A.ACCOUNT_NO AS ACCOUNT_NO
+        FROM V_ALP_MERS_STL_LS T
+        JOIN MERCHANT_BASE M ON T.MERCHANT_ID = M.MERCHANT_ID
+        JOIN MERCHANT_ADD_INFO A ON T.MERCHANT_ID = A.MERCHANT_ID
+        JOIN T_B_ORG O ON M.ZBANK = O.ORG_ID
+        <include refid="VAlpMersStlLs_findPage_where"/>
+    </select>
+
+    <select id="VAlpMersStlLs_findAll" resultMap="VAlpMersStlLs">
+        SELECT
+        <include refid="VAlpMersStlLs_columns"/>,O.NAME AS NAME
+        FROM V_ALP_MERS_STL_LS T
+        JOIN MERCHANT_BASE M ON T.MERCHANT_ID = M.MERCHANT_ID
+        JOIN T_B_ORG O ON M.ZBANK = O.ORG_ID
+        <include refid="VAlpMersStlLs_findPage_where"/>
+    </select>
+
+</mapper>
+

@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+        "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+
+
+<mapper namespace="com.yada.ssp.dao.MerchantSettleLsDao">
+    <resultMap id="MerchantSettleLs" type="com.yada.ssp.model.MerchantSettleLs">
+
+        <result property="merchantId" column="MERCHANT_ID"/>
+        <result property="merchantCname" column="MERCHANT_CNAME"/>
+        <result property="aliFee" column="ALI_FEE"/>
+        <result property="wechatFee" column="WECHAT_FEE"/>
+        <result property="aliWeTotal" column="ALI_WE_TOTAL"/>
+        <result property="count" column="COUNT"/>
+        <result property="aliWeFee" column="ALI_WE_FEE"/>
+        <result property="othFee" column="OTH_FEE"/>
+        <result property="myFee" column="MY_FEE"/>
+        <result property="gsFee" column="GS_FEE"/>
+        <result property="settleFee" column="SETTLE_FEE"/>
+        <result property="firstNo" column="FIRST_NO"/>
+        <result property="firstName" column="FIRST_NAME"/>
+        <result property="secondNo" column="SECOND_NO"/>
+        <result property="secondName" column="SECOND_NAME"/>
+        <result property="accountNo" column="account_no"/>
+        <result property="accountName" column="account_name"/>
+        <result property="openingBank" column="opening_bank"/>
+        <result property="openingBankNo" column="opening_bank_no"/>
+
+        <result property="aliTranAmt" column="ALI_TRANAMT"/>
+        <result property="weTranAmt" column="WE_TRANAMT"/>
+    </resultMap>
+    <sql id="MerchantSettleLs_columns">
+        base.merchant_id, --商户id
+       base.merchant_cname, --商户名称
+        nvl(ali.icount, 0) + nvl(wechat.icount, 0) as COUNT, -- 总交易数
+         nvl(ali.Fee, 0.00) + nvl(wechat.Fee, 0) as ALI_WE_FEE, -- 总手续费
+          nvl(ali.TranAmt, 0.00) + nvl(wechat.TranAmt, 0.00) as ALI_WE_TOTAL, -- 总交易金额
+           nvl(ali.TranAmt, 0.00) + nvl(wechat.TranAmt, 0.00)
+            - nvl(ali.Fee, 0.00) - nvl(wechat.Fee, 0) as SETTLE_FEE, --总清算金额
+           nvl(ali.TranAmt, 0.00) as ALI_TRANAMT,  -- 支付宝交易金额
+            nvl(ali.aliFee, 0.00) as ALI_FEE, --支付宝手续费
+           nvl(wechat.TranAmt, 0.00) as WE_TRANAMT, -- 微信交易金额
+           nvl(wechat.weFee, 0.00) as wechat_Fee, -- 微信手续费
+       nvl(ali.OthFee, 0.00) + nvl(wechat.OthFee, 0.00) as oth_Fee, --他行分润
+       nvl(ali.MyFee, 0.00) + nvl(wechat.MyFee, 0.00) as My_Fee, --我行分润
+       nvl(ali.GsFee, 0.00) + nvl(wechat.GsFee, 0.00) as Gs_Fee, -- 公司分润
+       nvl(ali.TranAmt, 0.00) + nvl(wechat.TranAmt, 0.00) -
+       o.bank_no as FIRST_NO, --所属机构号
+       o.name FIRST_NAME, -- 所属机构名称
+       org.bank_no as SECOND_NO, -- 二级机构号
+       org.name as SECOND_NAME, -- 二级机构名称
+       info.account_no, -- 入账账号
+       info.account_name, -- 账号名称
+       info.opening_bank, -- 账号开户行
+       info.opening_bank_no -- 开户行行号
+    </sql>
+
+    <sql id="MerchantSettleLs_findPage_where">
+        <where>
+            <if test="merchantId != null and merchantId!=''">
+                AND base.merchant_id=#{merchantId}
+            </if>
+           <!-- <if test="settleDate != null and settleDate !=''">
+                AND web.settle_date = #{settleDate}
+            </if>
+            <if test="settleDate != null and settleDate !=''">
+                OR alipay.settle_date = #{settleDate}
+            </if>-->
+            <if test="merchantCname != null and merchantCname !=''">
+                AND base.merchant_cname like '%'||#{merchantCname}||'%'
+            </if>
+            <if test="orgId != null and orgId !=''">
+                AND O.ORG_ID like #{orgId}||'%'
+            </if>
+            AND  nvl(ali.icount, 0) + nvl(wechat.icount, 0) > 0
+        </where>
+    </sql>
+
+    <select id="MerchantSettleLs_findCountByWhere" resultType="int">
+        select
+          count(0)
+        from merchant_base base
+        left join (select al.merchant_id,
+        sum(ls.order_amount) TranAmt,
+        sum(ls.service_charge)*-1 aliFee,
+        sum(ls.amount_fee) Fee,
+        sum(ls.my_fee) MyFee,
+        sum(ls.oth_fee) as OthFee,
+        sum(ls.gs_fee) as GsFee,
+        count(0) as icount
+        from alipay_settle_ls ls
+        left join ALIPAY_MERCHANT_BASE al
+        on al.sub_merchant_id = ls.store_id
+        where ls.settle_date=#{settleDate}
+        group by al.merchant_id) ali
+        on ali.merchant_id = base.merchant_id
+        left join (select wb.merchant_id,
+        sum(wls.total_amount) TranAmt,
+        sum(wls.fee) weFee,
+        sum(wls.fee_rate) weFeeRate,
+        sum(wls.amount_fee) Fee,
+        sum(wls.my_fee) MyFee,
+        sum(wls.oth_fee) as OthFee,
+        sum(wls.gs_fee) as GsFee,
+        count(0) as icount
+        from webchat_settle_ls wls
+        left join webchant_merchant_base wb
+        on wb.sub_mch_id = wls.sub_merchant_id
+        where wls.settle_date=#{settleDate}
+        group by wb.merchant_id) wechat
+        on wechat.merchant_id = base.merchant_id
+        left join T_B_ORG o
+        on o.org_id = base.zbank
+        left join T_B_ORG org
+        on org.org_id = base.belong_org_id
+        left join MERCHANT_ADD_INFO info
+        on info.merchant_id = base.merchant_id
+        <include refid="MerchantSettleLs_findPage_where"/>
+
+
+    </select>
+
+    <select id="MerchantSettleLs_findListByWhere" resultMap="MerchantSettleLs">
+
+select
+        <include refid="MerchantSettleLs_columns"/>
+  from merchant_base base
+  left join (       select al.merchant_id,
+                    sum(ls.order_amount) TranAmt,
+                    sum(ls.service_charge)* -1 aliFee,
+                    sum(ls.amount_fee) Fee,
+                    sum(ls.my_fee) MyFee,
+                    sum(ls.oth_fee) as OthFee,
+                    sum(ls.gs_fee) as GsFee,
+                    count(0) as icount
+               from alipay_settle_ls ls
+               left join ALIPAY_MERCHANT_BASE al
+                 on al.sub_merchant_id = ls.store_id
+             where ls.settle_date=#{settleDate}
+              group by al.merchant_id) ali
+    on ali.merchant_id = base.merchant_id
+  left join (
+                    select wb.merchant_id,
+                    sum(wls.total_amount) TranAmt,
+                    sum(wls.fee) weFee,
+                    sum(wls.fee_rate) weFeeRate,
+                    sum(wls.amount_fee) Fee,
+                    sum(wls.my_fee) MyFee,
+                    sum(wls.oth_fee) as OthFee,
+                    sum(wls.gs_fee) as GsFee,
+                    count(0) as icount
+               from webchat_settle_ls wls
+               left join webchant_merchant_base wb
+                 on wb.sub_mch_id = wls.sub_merchant_id
+             where wls.settle_date=#{settleDate}
+              group by wb.merchant_id) wechat
+                on wechat.merchant_id = base.merchant_id
+              left join T_B_ORG o
+                on o.org_id = base.zbank
+              left join T_B_ORG org
+                on org.org_id = base.belong_org_id
+              left join MERCHANT_ADD_INFO info
+                on info.merchant_id = base.merchant_id
+        <include refid="MerchantSettleLs_findPage_where"/>
+
+    </select>
+</mapper>
+

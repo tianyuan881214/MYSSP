@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+		PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+		"http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+<mapper namespace="com.yada.ssp.dao.RateTableDao">
+
+	<resultMap id="RateTable" type="com.yada.ssp.model.RateTable">
+		<id property="rateId" column="RATE_ID" />
+		<result property="rate" column="RATE" />
+		<result property="rateDescription" column="RATE_DESCRIPTION" />
+		<result property="businessId" column="BUSINESS_ID" />
+		<result property="feeId" column="FEE_ID" />
+		<result property="accountNo" column="ACCOUNT_NO" />
+
+		<result property="orgId" column="ORG_ID"/>
+	</resultMap>
+
+	<sql id="RateTable_columns">
+		T.RATE_ID,
+		T.RATE,
+		T.RATE_DESCRIPTION,
+		T.BUSINESS_ID,
+		T.ACCOUNT_NO
+	</sql>
+	<insert id="RateTable_insert">
+		INSERT INTO RATE_LS (
+		RATE_ID,
+		 RATE,
+		 RATE_DESCRIPTION,
+		BUSINESS_ID,
+		ACCOUNT_NO
+		) VALUES (
+		 #{rateId,jdbcType=VARCHAR},
+		 #{rate,jdbcType=VARCHAR},
+		 #{rateDescription,jdbcType=VARCHAR},
+		 #{businessId,jdbcType=VARCHAR},
+		 #{accountNo,jdbcType=VARCHAR}
+		)
+	</insert>
+
+	<update id="RateTable_update" parameterType="com.yada.ssp.model.RateTable">
+       update
+		RATE_LS set
+		RATE=#{rate,jdbcType=VARCHAR},
+		RATE_DESCRIPTION=#{rateDescription,jdbcType=VARCHAR},
+		BUSINESS_ID=#{businessId,jdbcType=VARCHAR},
+		ACCOUNT_NO=#{accountNo,jdbcType=VARCHAR}
+		where
+		RATE_ID=#{rateId,jdbcType=VARCHAR}
+	</update>
+	<delete id="RateTable_delete">
+		<![CDATA[
+        DELETE FROM RATE_LS WHERE
+        MERCHANT_ID = #{id}
+        ]]>
+	</delete>
+
+	<sql id="RateTable_findPage_where">
+
+		<where>
+			<if test="rateId != null and rateId !=''">
+				AND T.RATE_ID=#{rateId}
+			</if>
+			<if test="rate != null and rate !=''">
+				AND T.RATE=#{rate}
+			</if>
+		</where>
+	</sql>
+
+	<select id="RateTable_findCountByWhere" resultType="int">
+		SELECT count(*) FROM RATE_LS T
+		LEFT JOIN BUSINESS_BASE B ON T.BUSINESS_ID=B.BUSINESS_ID
+		<include refid="RateTable_findPage_where" />
+	</select>
+
+	<select id="RateTable_findListByWhere" resultMap="RateTable">
+		SELECT
+		<include refid="RateTable_columns" />
+		FROM RATE_LS T
+		LEFT JOIN BUSINESS_BASE B ON T.BUSINESS_ID=B.BUSINESS_ID
+		<include refid="RateTable_findPage_where" />
+		ORDER BY T.RATE_ID DESC
+	</select>
+
+	<select id="RateTable_getById" resultMap="RateTable">
+		SELECT
+		<include refid="RateTable_columns"/>
+		FROM RATE_LS T
+		LEFT JOIN BUSINESS_BASE B ON T.BUSINESS_ID=B.BUSINESS_ID
+		WHERE T.RATE_ID = #{rateId}
+	</select>
+</mapper>
+

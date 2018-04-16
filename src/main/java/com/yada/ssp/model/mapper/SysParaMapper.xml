@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+		PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+		"http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+<mapper namespace="com.yada.ssp.dao.SysParaDao">
+
+	<resultMap id="SysPara" type="com.yada.ssp.model.SysPara">
+		<id property="paraId" column="PARA_ID" />
+		<result property="paraValue" column="PARA_VALUE" />
+		<result property="remark" column="REMARK" />
+	</resultMap>
+
+	<sql id="SysPara_columns">
+		T.PARA_ID,
+		T.PARA_VALUE,
+		T.REMARK
+	</sql>
+
+	<update id="SysPara_update" parameterType="com.yada.ssp.model.SysPara">
+       update
+		T_P_SYS_PARA set
+		PARA_VALUE=#{paraValue,jdbcType=VARCHAR},
+		REMARK=#{remark,jdbcType=VARCHAR}
+		where
+		PARA_ID=#{paraId,jdbcType=VARCHAR}
+	</update>
+
+	<sql id="SysPara_findPage_where">
+
+		<where>
+			<if test="paraId != null and paraId !=''">
+				AND T.PARA_ID=#{paraId}
+			</if>
+			<if test="paraValue != null and paraValue !=''">
+				AND T.PARA_VALUE=#{paraValue}
+			</if>
+		</where>
+	</sql>
+
+	<select id="SysPara_findCountByWhere" resultType="int">
+		SELECT count(*) FROM T_P_SYS_PARA T
+		<include refid="SysPara_findPage_where" />
+	</select>
+
+	<select id="SysPara_findListByWhere" resultMap="SysPara">
+		SELECT
+		<include refid="SysPara_columns" />
+		FROM T_P_SYS_PARA T
+		<include refid="SysPara_findPage_where" />
+		ORDER BY T.PARA_ID ASC
+	</select>
+
+	<select id="SysPara_getById" resultMap="SysPara">
+		SELECT
+		<include refid="SysPara_columns"/>
+		FROM T_P_SYS_PARA T
+		WHERE T.PARA_ID = #{paraId}
+	</select>
+</mapper>
+

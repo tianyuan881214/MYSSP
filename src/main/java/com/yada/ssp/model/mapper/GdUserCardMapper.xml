@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+"http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+
+<mapper namespace="com.yada.ssp.dao.GdUserCardDao">
+
+	<resultMap id="GdUserCard" type="com.yada.ssp.model.GdUserCard">
+		<result property="cardNo" column="CARD_NO" />
+		<result property="phoneNo" column="PHONE_NO" />
+		<result property="userName" column="USER_NAME" />
+	</resultMap>
+
+	<sql id="GdUserCard_columns">
+		T.CARD_NO ,
+		T.PHONE_NO ,
+		T.USER_NAME 
+	</sql>
+
+	<insert id="GdUserCard_insert" parameterType="com.yada.ssp.model.GdUserCard">
+		<selectKey resultType="java.lang.String" order="BEFORE"
+			keyProperty="id">
+			SELECT T_SEQ_GD_USER_CARD.nextval AS ID FROM DUAL
+		</selectKey>
+    <![CDATA[
+		insert into GD_USER_CARD
+		 (CARD_NO,PHONE_NO,USER_NAME)  
+		   values 
+		 (#{cardNo},#{phoneNo},#{userName})
+		]]>
+	</insert>
+
+	<update id="GdUserCard_update" parameterType="com.yada.ssp.model.GdUserCard">
+		update GD_USER_CARD set 
+			   CARD_NO=#{cardNo},
+			   PHONE_NO=#{phoneNo},
+			   USER_NAME=#{userName}
+		where CARD_NO=#{cardNo}
+	</update>
+
+	<delete id="GdUserCard_delete">
+		delete from GD_USER_CARD where CARD_NO=#{cardNo}
+	</delete>
+
+	<select id="GdUserCard_getById" resultMap="GdUserCard">
+		SELECT
+		<include refid="GdUserCard_columns" />
+		FROM GD_USER_CARD T
+		WHERE T.CARD_NO = #{cardNo}
+	</select>
+
+	<sql id="GdUserCard_findPage_where">
+		<where>
+			<if test="cardNo != null and cardNo !=''">
+				AND T.CARD_NO = #{cardNo}
+			</if>
+			<if test="phoneNo != null and phoneNo !=''">
+				AND T.PHONE_NO = #{phoneNo}
+			</if>
+			<if test="userName != null and userName !=''">
+				AND T.USER_NAME = #{userName}
+			</if>
+		</where>
+	</sql>
+
+	<select id="GdUserCard_findCountByWhere" resultType="int">
+		SELECT count(*) FROM GD_USER_CARD T
+		<include refid="GdUserCard_findPage_where" />
+	</select>
+
+
+	<select id="GdUserCard_findListByWhere" resultMap="GdUserCard">
+		SELECT
+		<include refid="GdUserCard_columns" />
+		FROM GD_USER_CARD T
+		<include refid="GdUserCard_findPage_where" />
+		ORDER BY T.CARD_NO DESC
+	</select>
+</mapper>
+

@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+        "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+
+
+<mapper namespace="com.yada.ssp.dao.AlipaySettleLsDao">
+
+    <resultMap id="AlipaySettleLs" type="com.yada.ssp.model.AlipaySettleLs">
+        <result property="merchantId" column="MERCHANT_ID"/>
+        <result property="merchantCname" column="MERCHANT_CNAME"/>
+        <result property="storeId" column="store_id"/>
+        <result property="outTradeNo" column="out_trade_no"/>
+        <result property="firsetName" column="FIRST_NAME"/>
+        <result property="secondName" column="SECOND_NAME"/>
+        <result property="orderAmout" column="order_amount"/>
+        <result property="amountFee" column="amount_fee"/>
+        <result property="settleAmount" column="SETTLE_AMOUNT"/>
+        <result property="serviceCharge" column="SERVICE_CHARGE"/>
+        <result property="othFee" column="OTH_FEE"/>
+        <result property="myFee" column="MY_FEE"/>
+        <result property="gsFee" column="GS_FEE"/>
+        <result property="accountType" column="account_type"/>
+        <result property="finishDate" column="finish_date"/>
+        <result property="settleDate" column="settle_date"/>
+    </resultMap>
+
+    <sql id="AlipaySettleLs_columns">
+                   mer.merchant_id,  -- 商户号
+                mer.merchant_cname ,  -- 商户名称
+                ls.store_id,  -- 支付宝商户号
+                ls.out_trade_no,   --  商户订单号
+                o.name as FIRST_NAME,  -- 所属机构
+                org.name as SECONDE_NAME , -- 二级机构
+                --交易状态
+                ls.order_amount ,  -- 交易金额
+                ls.amount_fee , --总手续费
+                ls.order_amount-ls.amount_fee as SETTLE_AMOUNT ,   --清算金额
+                ls.service_charge*-1  as service_charge ,  -- 支付宝服务费
+                ls.oth_fee,  -- 其他分行分润
+                ls.my_fee,  -- 本行分润
+                ls.gs_fee ,  -- 公司分润
+                 mer.account_type ,  -- 账号类型
+                 ls.finish_date , -- 交易日期
+                ls.settle_date  -- 清算日期
+    </sql>
+
+
+    <sql id="AlipaySettleLs_findPage_where">
+        <where>
+            <if test="merchantId != null and merchantId !=''">
+                AND mer.merchant_id=#{merchantId}
+            </if>
+            <if test="finishDateTimeBegin != null and finishDateTimeBegin !=''">
+                AND ls.settle_date &gt;= #{finishDateTimeBegin}
+            </if>
+            <if test="finishDateTimeEnd != null and finishDateTimeEnd !=''">
+                AND ls.settle_date &lt;= #{finishDateTimeEnd}
+            </if>
+            <if test="merchantCname != null and merchantCname !=''">
+                AND mer.merchant_cname like '%'||#{merchantCname}||'%'
+            </if>
+            <if test="orgId != null and orgId !=''">
+                AND o.ORG_ID like #{orgId}||'%'
+            </if>
+        </where>
+    </sql>
+
+    <select id="AlipaySettleLs_findCountByWhere" resultType="int">
+        select
+             COUNT (0)
+        from ALIPAY_SETTLE_LS ls
+        left join ALIPAY_MERCHANT_BASE base
+        on ls.store_id = base.sub_merchant_id
+        left join merchant_base mer
+        on mer.merchant_id = base.merchant_id
+        left join t_b_org o
+        on o.org_id = mer.zbank
+        left join t_b_org org
+        on mer.belong_org_id = org.org_id
+        <include refid="AlipaySettleLs_findPage_where"/>
+    </select>
+
+    <select id="AlipaySettleLs_findListByWhere" resultMap="AlipaySettleLs">
+       select
+        <include refid="AlipaySettleLs_columns"/>
+              from ALIPAY_SETTLE_LS ls
+              left join ALIPAY_MERCHANT_BASE base
+              on ls.store_id = base.sub_merchant_id
+              left join merchant_base mer
+                on mer.merchant_id = base.merchant_id
+              left join t_b_org o
+                on o.org_id = mer.zbank
+              left join t_b_org org
+                on mer.belong_org_id = org.org_id
+        <include refid="AlipaySettleLs_findPage_where"/>
+    </select>
+</mapper>
+

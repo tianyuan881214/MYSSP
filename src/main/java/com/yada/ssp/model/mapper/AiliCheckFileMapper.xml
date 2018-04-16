@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+        "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+
+
+<mapper namespace="com.yada.ssp.dao.AiliCheckFileDao">
+
+    <resultMap id="AiliCheckFile" type="com.yada.ssp.model.AiliCheckFile">
+        <result property="tradeNo" column="TRADE_NO"/>
+        <result property="outTradeNo" column="OUT_TRADE_NO"/>
+        <result property="tranType" column="TRAN_TYPE"/>
+        <result property="createDate" column="CREATE_DATE"/>
+        <result property="finishDate" column="FINISH_DATE"/>
+        <result property="storeId" column="STORE_ID"/>
+        <result property="storeName" column="STORE_NAME"/>
+        <result property="operatorId" column="OPERATOR_ID"/>
+        <result property="terminalId" column="TERMINAL_ID"/>
+        <result property="oppositeId" column="OPPOSITE_ID"/>
+        <result property="orderAmount" column="ORDER_AMOUNT"/>
+        <result property="merchantPaidAmount" column="MERCHANT_PAID_AMOUNT"/>
+        <result property="alipayRedPacket" column="ALIPAY_RED_PACKET"/>
+        <result property="integralTreasure" column="INTEGRAL_TREASURE"/>
+        <result property="alipayPrivilege" column="ALIPAY_PRIVILEGE"/>
+        <result property="merchantPrivilege" column="MERCHANT_PRIVILEGE"/>
+        <result property="ticketVerification" column="TICKET_VERIFICATION"/>
+        <result property="ticketName" column="TICKET_NAME"/>
+        <result property="merchantRedPacket" column="MERCHANT_RED_PACKET"/>
+        <result property="cardConsume" column="CARD_CONSUME"/>
+        <result property="refundBatchNo" column="REFUND_BATCH_NO"/>
+        <result property="serviceCharge" column="SERVICE_CHARGE"/>
+        <result property="paidAmount" column="PAID_AMOUNT"/>
+        <result property="merchantDiscernNo" column="MERCHANT_DISCERN_NO"/>
+        <result property="tranWay" column="TRAN_WAY"/>
+        <result property="remark" column="REMARK"/>
+        <result property="merchantId" column="MERCHANT_ID"/>
+        <result property="settleDate" column="SETTLE_DATE"/>
+        <result property="orgId" column="ORG_ID"/>
+        <result property="pOrgId" column="P_ORG_ID"/>
+        <result property="name" column="NAME"/>
+        <result property="accountNo" column="ACCOUNT_NO"/>
+        <result property="bankServiceAmt" column="bank_service_amt"/>
+        <result property="bank_fee" column="bank_fee"/>
+        <result property="netMerAmt" column="net_mer_amt"/>
+    </resultMap>
+<!--to_char(to_date(FINISH_DATE,'yyyy/mm/dd hh24:mi'),'yyyy/mm/dd hh24:mi:ss')-->
+
+    <sql id="AiliCheckFile_columns">
+            T.TRADE_NO,
+            T.OUT_TRADE_NO,
+            T.TRAN_TYPE,
+            T.CREATE_DATE,
+            T.FINISH_DATE,
+            T.MERCHANT_ID as STORE_ID,
+            T.MERCHANT_CNAME as STORE_NAME,
+            T.OPERATOR_ID,
+            T.TERMINAL_ID,
+            T.OPPOSITE_ID,
+            to_char(T.ORDER_AMOUNT,'999999999990.99') as ORDER_AMOUNT,
+            to_char(T.SERVICE_CHARGE,'999999999990.99') as SERVICE_CHARGE,
+            to_char( T.PAID_AMOUNT,'999999999990.99') as PAID_AMOUNT,
+            to_char(round(t.ORDER_AMOUNT*nvl(T.fee,0),2),'999999999990.99') as bank_service_amt,
+            to_char(T.fee,'999999999990.9999')as bank_fee,
+            to_char(t.ORDER_AMOUNT - round(t.ORDER_AMOUNT*nvl(T.fee,0),2) ,'999999999990.99') as net_mer_amt,
+            T.MERCHANT_PAID_AMOUNT,
+            T.ALIPAY_RED_PACKET,
+            T.INTEGRAL_TREASURE,
+            T.ALIPAY_PRIVILEGE,
+            T.MERCHANT_PRIVILEGE,
+            T.TICKET_VERIFICATION,
+            T.TICKET_NAME,
+            T.MERCHANT_RED_PACKET,
+            T.CARD_CONSUME,
+            T.REFUND_BATCH_NO,
+            T.MERCHANT_DISCERN_NO,
+            T.TRAN_WAY,
+            T.REMARK,
+            T.SETTLE_DATE,
+            T.NAME
+</sql>
+
+    <select id="AiliCheckFile_findByTradeNoAndTranTypeAndCreateDate" resultMap="AiliCheckFile">
+        SELECT
+        <include refid="AiliCheckFile_columns"/>
+        FROM ( SELECT * FROM (
+        SELECT T.*,
+        M.MERCHANT_ID ,B.MERCHANT_CNAME,O.NAME,O.ORG_ID ,A.ACCOUNT_NO,rb.business_id,fl.fee
+        from ALIPAY_SETTLE_LS T
+        JOIN ALIPAY_MERCHANT_BASE M
+        ON T.STORE_ID = M.SUB_MERCHANT_ID
+        JOIN MERCHANT_BASE B
+        ON M.MERCHANT_ID = B.MERCHANT_ID
+        JOIN MERCHANT_ADD_INFO A
+        ON B.MERCHANT_ID = A.MERCHANT_ID
+        JOIN T_B_ORG O
+        ON B.ZBANK = O.ORG_ID
+        left JOIN merchant_business rb
+        on m.merchant_id = rb.merchand_id and rb.business_id='000000000000002'
+        Left join Fee_Ls fl
+        on rb.fee_id = fl.fee_id)p
+        )T WHERE  T.TRADE_NO = #{tradeNo,jdbcType=VARCHAR}
+        AND T.CREATE_DATE=#{createDate,jdbcType=VARCHAR}
+        AND T.FINISH_DATE=#{finishDate,jdbcType=VARCHAR}
+    </select>
+
+    <sql id="AiliCheckFile_findPage_where">
+
+        <where>
+            <if test="storeId != null and storeId !=''">
+                AND T.MERCHANT_ID=#{storeId}
+            </if>
+            <if test="tradeNo != null and tradeNo !=''">
+                AND T.TRADE_NO=#{tradeNo}
+            </if>
+            <if test="outTradeNo != null and outTradeNo !=''">
+                AND T.OUT_TRADE_NO=#{outTradeNo}
+            </if>
+            <if test="accountNo != null and accountNo !=''">
+                AND T.ACCOUNT_NO=#{accountNo}
+            </if>
+            <if test="terminalId != null and terminalId !=''">
+                AND T.TERMINAL_ID=#{terminalId}
+            </if>
+
+
+            <!--<if test="finishDateTimeBegin != null and finishDateTimeBegin !=''">
+                AND to_char(to_date(T.FINISH_DATE,'yyyy/mm/dd hh24:mi'),'yyyy/mm/dd hh24:mi') &gt;= #{finishDateTimeBegin}||' 00:00:00'
+            </if>
+            <if test="finishDateTimeEnd != null and finishDateTimeEnd !=''">
+                AND to_char(to_date(T.FINISH_DATE,'yyyy/mm/dd hh24:mi'),'yyyy/mm/dd hh24:mi') &lt;= #{finishDateTimeEnd}||' 23:59:00'
+            </if>-->
+            <if test="finishDateTimeBegin != null and finishDateTimeBegin !=''">
+                AND T.SETTLE_DATE &gt;= #{finishDateTimeBegin}
+            </if>
+            <if test="finishDateTimeEnd != null and finishDateTimeEnd !=''">
+                AND T.SETTLE_DATE &lt;= #{finishDateTimeEnd}
+            </if>
+            AND T.business_id='000000000000002'
+        </where>
+    </sql>
+
+    <select id="AiliCheckFile_findCountByWhere" resultType="int">
+        SELECT count(*) FROM
+        ( SELECT * FROM (
+        SELECT T.*,
+        M.MERCHANT_ID ,B.MERCHANT_CNAME,O.NAME,O.ORG_ID ,A.ACCOUNT_NO,rb.business_id,fl.fee
+        from ALIPAY_SETTLE_LS T
+        JOIN ALIPAY_MERCHANT_BASE M
+        ON T.STORE_ID = M.SUB_MERCHANT_ID
+        JOIN MERCHANT_BASE B
+        ON M.MERCHANT_ID = B.MERCHANT_ID
+        JOIN MERCHANT_ADD_INFO A
+        ON B.MERCHANT_ID = A.MERCHANT_ID
+        JOIN T_B_ORG O
+        ON B.ZBANK = O.ORG_ID
+        left JOIN merchant_business rb
+        on m.merchant_id = rb.merchand_id
+        Left join Fee_Ls fl
+        on rb.fee_id = fl.fee_id)p
+        where p.ORG_ID in (select o.org_id from t_b_org o start with o.org_id=#{orgId} connect by o.p_org_id=prior o.org_id)
+        ) T
+        <include refid="AiliCheckFile_findPage_where"/>
+    </select>
+
+
+    <select id="AiliCheckFile_findListByWhere" resultMap="AiliCheckFile">
+        SELECT
+        <include refid="AiliCheckFile_columns"/>
+        FROM (
+        SELECT * FROM (
+        SELECT T.*,
+        M.MERCHANT_ID ,B.MERCHANT_CNAME,O.NAME,O.ORG_ID ,A.ACCOUNT_NO,rb.business_id,fl.fee
+        from ALIPAY_SETTLE_LS T
+        JOIN ALIPAY_MERCHANT_BASE M
+        ON T.STORE_ID = M.SUB_MERCHANT_ID
+        JOIN MERCHANT_BASE B
+        ON M.MERCHANT_ID = B.MERCHANT_ID
+        JOIN MERCHANT_ADD_INFO A
+        ON B.MERCHANT_ID = A.MERCHANT_ID
+        JOIN T_B_ORG O
+        ON B.ZBANK = O.ORG_ID
+        left JOIN merchant_business rb
+        on m.merchant_id = rb.merchand_id
+        Left join Fee_Ls fl
+        on rb.fee_id = fl.fee_id)P
+        where p.ORG_ID in (select o.org_id from t_b_org o start with o.org_id=#{orgId} connect by o.p_org_id=prior o.org_id)
+        )T
+        <include refid="AiliCheckFile_findPage_where"/>
+        ORDER BY T.STORE_ID,SETTLE_DATE DESC
+    </select>
+
+    <select id="AiliCheckFile_findAll" resultMap="AiliCheckFile">
+        SELECT
+        <include refid="AiliCheckFile_columns"/>
+        FROM(
+        SELECT * FROM (
+        SELECT T.*,
+        M.MERCHANT_ID ,B.MERCHANT_CNAME,O.NAME,O.ORG_ID ,A.ACCOUNT_NO,rb.business_id,fl.fee
+        from ALIPAY_SETTLE_LS T
+        JOIN ALIPAY_MERCHANT_BASE M
+        ON T.STORE_ID = M.SUB_MERCHANT_ID
+        JOIN MERCHANT_BASE B
+        ON M.MERCHANT_ID = B.MERCHANT_ID
+        JOIN MERCHANT_ADD_INFO A
+        ON B.MERCHANT_ID = A.MERCHANT_ID
+        JOIN T_B_ORG O
+        ON B.ZBANK = O.ORG_ID
+        left JOIN merchant_business rb
+        on m.merchant_id = rb.merchand_id
+        Left join Fee_Ls fl
+        on rb.fee_id = fl.fee_id)P
+        where p.ORG_ID in (select o.org_id from t_b_org o start with o.org_id=#{orgId} connect by o.p_org_id=prior o.org_id)
+        )T
+        <include refid="AiliCheckFile_findPage_where"/>
+        ORDER BY T.STORE_ID,SETTLE_DATE DESC
+    </select>
+
+</mapper>
+

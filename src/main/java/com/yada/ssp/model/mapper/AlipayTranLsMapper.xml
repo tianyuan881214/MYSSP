@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+        "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+
+<mapper namespace="com.yada.ssp.dao.AlipayTranLsDao">
+    <resultMap id="AlipayTranLs" type="com.yada.ssp.model.AlipayTranLs">
+        <result property="outTradeNo" column="OUT_TRADE_NO"/>
+        <result property="totalAmount" column="TOTAL_AMOUNT"/>
+        <result property="batchNo" column="BATCH_NO"/>
+        <result property="traceNo" column="TRACE_NO"/>
+        <result property="tranType" column="TRAN_TYPE"/>
+        <result property="operatorId" column="OPERATOR_ID"/>
+        <result property="tranDate" column="TRAN_DATE"/>
+        <result property="tranTime" column="TRAN_TIME"/>
+        <result property="refundFlag" column="REFUND_FLAG"/>
+        <result property="firstName" column="FIRST_NAME"/>
+        <result property="secondName" column="SECOND_NAME"/>
+        <result property="state" column="STATE"/>
+        <result property="merchantCname" column="MERCHANT_CNAME"/>
+        <result property="merchantId" column="MERCHANT_ID"/>
+
+    </resultMap>
+    <sql id="AlipayTranLs_columns">
+        tmp.OUT_TRADE_NO, --商户订单号
+        tmp.TOTAL_AMOUNT, -- 交易金额
+        tmp.BATCH_NO, -- 终端批次号
+        tmp.TRACE_NO, -- 终端流水号
+        tmp.TRAN_TYPE, --交易类型
+        tmp.OPERATOR_ID, -- 操作员编号
+        tmp.TRAN_DATE, -- 交易日期
+        tmp.TRAN_TIME, --交易时间
+        tmp.REFUND_FLAG, -- 退货标识
+        O.NAME           as FIRST_Name, -- 所属机构
+        O.NAME           as SECOND_NAME, -- 二级机构
+        M.STATE, -- 商户状态
+        M.MERCHANT_CNAME, --商户名称
+        M.MERCHANT_ID --商户号
+    </sql>
+
+
+    <sql id="AlipayTranLs_findPage_where">
+        <where>
+            <if test="merchantId != null and merchantId!=''">
+                AND M.MERCHANT_ID=#{merchantId}
+            </if>
+            <if test="finishDateTimeBegin != null and finishDateTimeBegin !=''">
+                AND tmp.TRAN_DATE &gt;= #{finishDateTimeBegin}
+            </if>
+            <if test="finishDateTimeEnd != null and finishDateTimeEnd !=''">
+                AND tmp.TRAN_DATE &lt;= #{finishDateTimeEnd}
+            </if>
+            <if test="outTradeNo != null and outTradeNo !=''">
+                AND tmp.OUT_TRADE_NO = #{outTradeNo}
+            </if>
+            <if test="merchantCname != null and merchantCname !=''">
+                AND M.MERCHANT_CNAME  like  '%'||#{merchantCname}||'%'
+            </if>
+            <if test="orgId != null and orgId !=''">
+                AND O.ORG_ID  like  #{orgId}||'%'
+            </if>
+        </where>
+    </sql>
+
+    <select id="AlipayTranLs_findCountByWhere" resultType="int">
+        select
+          COUNT(0)
+        from (SELECT ls.OUT_TRADE_NO, --商户订单号
+        ls.TOTAL_AMOUNT, -- 交易金额
+        ls.BATCH_NO, -- 终端批次号
+        ls.TRACE_NO, -- 终端流水号
+        ls.TRAN_TYPE, --交易类型
+        ls.OPERATOR_ID, -- 操作员编号
+        ls.TRAN_DATE, -- 交易日期
+        ls.TRAN_TIME, --交易时间
+        ls.REFUND_FLAG, -- 退货标识
+        ls.STORE_ID
+        FROM ALIPAY_TRAN_LS ls
+        UNION ALL
+        SELECT ols.OUT_TRADE_NO, --商户订单号
+        ols.TOTAL_AMOUNT, -- 交易金额
+        ols.BATCH_NO, -- 终端批次号
+        ols.TRACE_NO, -- 终端流水号
+        ols.TRAN_TYPE, --交易类型
+        ols.OPERATOR_ID, -- 操作员编号
+        ols.TRAN_DATE, -- 交易日期
+        ols.TRAN_TIME, --交易时间
+        ols.REFUND_FLAG, -- 退货标识
+        ols.STORE_ID
+        FROM OLD_ALIPAY_TRAN_LS ols) tmp
+        left join ALIPAY_MERCHANT_BASE alipayBase
+        on alipayBase.Sub_Merchant_Id = tmp.store_id
+        left JOIN MERCHANT_BASE M
+        ON alipayBase.Merchant_Id = M.MERCHANT_ID
+        left JOIN T_B_ORG O
+        ON M.ZBANK = O.ORG_ID
+        left JOIN T_B_ORG org
+        ON m.belong_org_id = org.ORG_ID
+        <include refid="AlipayTranLs_findPage_where"/>
+    </select>
+
+
+    <select id="AlipayTranLs_findListByWhere" resultMap="AlipayTranLs">
+        select
+        <include refid="AlipayTranLs_columns"/>
+        from (SELECT ls.OUT_TRADE_NO, --商户订单号
+        ls.TOTAL_AMOUNT, -- 交易金额
+        ls.BATCH_NO, -- 终端批次号
+        ls.TRACE_NO, -- 终端流水号
+        ls.TRAN_TYPE, --交易类型
+        ls.OPERATOR_ID, -- 操作员编号
+        ls.TRAN_DATE, -- 交易日期
+        ls.TRAN_TIME, --交易时间
+        ls.REFUND_FLAG, -- 退货标识
+        ls.STORE_ID
+        FROM ALIPAY_TRAN_LS ls
+        UNION ALL
+        SELECT ols.OUT_TRADE_NO, --商户订单号
+        ols.TOTAL_AMOUNT, -- 交易金额
+        ols.BATCH_NO, -- 终端批次号
+        ols.TRACE_NO, -- 终端流水号
+        ols.TRAN_TYPE, --交易类型
+        ols.OPERATOR_ID, -- 操作员编号
+        ols.TRAN_DATE, -- 交易日期
+        ols.TRAN_TIME, --交易时间
+        ols.REFUND_FLAG, -- 退货标识
+        ols.STORE_ID
+        FROM OLD_ALIPAY_TRAN_LS ols) tmp
+        left join ALIPAY_MERCHANT_BASE alipayBase
+        on alipayBase.Sub_Merchant_Id = tmp.store_id
+        left JOIN MERCHANT_BASE M
+        ON alipayBase.Merchant_Id = M.MERCHANT_ID
+        left JOIN T_B_ORG O
+        ON M.ZBANK = O.ORG_ID
+        left JOIN T_B_ORG org
+        ON m.belong_org_id = org.ORG_ID
+        <include refid="AlipayTranLs_findPage_where"/>
+    </select>
+
+</mapper>
+

@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+        "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+
+
+<mapper namespace="com.yada.ssp.dao.BosSettleLsDao">
+    <resultMap id="BosSettleLs" type="com.yada.ssp.model.BosSettleLs">
+        <result property="recordId" column="RECORD_ID"/>
+        <result property="settleDate" column="SETTLE_DATE"/>
+        <result property="merchantId" column="MERCHANT_ID"/>
+        <result property="terminalId" column="TERMINAL_ID"/>
+        <result property="batchNo" column="BATCH_NO"/>
+        <result property="cardNo" column="CARD_NO"/>
+        <result property="tranData" column="TRAN_DATE"/>
+        <result property="tranTime" column="TRAN_TIME"/>
+        <result property="tranAmt" column="TRAN_AMT"/>
+        <result property="tranFee" column="TRAN_FEE"/>
+        <result property="settleAmt" column="SETTLE_AMT"/>
+        <result property="authNo" column="AUTH_NO"/>
+        <result property="tranCode" column="TRAN_CODE"/>
+        <result property="referenceNo" column="REFERENCE_NO"/>
+    </resultMap>
+
+
+    <sql id="BosSettleLs_columns">
+        T.RECORD_ID,T.SETTLE_DATE,T.MERCHANT_ID,T.TERMINAL_ID,T.BATCH_NO,T.CARD_NO,T.TRAN_DATE,T.TRAN_TIME,T.TRAN_AMT,T.TRAN_FEE,
+        T.SETTLE_AMT,T.AUTH_NO,T.TRAN_CODE,T.REFERENCE_NO
+    </sql>
+
+    <select id="BosSettleLs_getById" resultMap="BosSettleLs">
+        SELECT
+        <include refid="BosSettleLs_columns"/>
+        FROM BOS_SETTLE_LS T
+        WHERE
+        T.RECORD_ID=#{recordId}
+    </select>
+
+    <sql id="BosSettleLs_findPage_where">
+
+        <where>
+            <if test="merchantId != null and merchantId !=''">
+                AND T.MERCHANT_ID=#{merchantId}
+            </if>
+            <if test="terminalId != null and terminalId !=''">
+                AND T.TERMINAL_ID=#{terminalId}
+            </if>
+            <if test="batchNo != null and batchNo !=''">
+                AND T.BATCH_NO=#{batchNo}
+            </if>
+            <if test="tranDateTimeBegin != null and tranDateTimeBegin !=''">
+                AND T.TRAN_DATE &gt;= #{tranDateTimeBegin}
+            </if>
+            <if test="tranDateTimeEnd != null and tranDateTimeEnd !=''">
+                AND T.TRAN_DATE &lt;= #{tranDateTimeEnd}
+            </if>
+            <if test="cardNo != null and cardNo !=''">
+                AND T.CARD_NO = #{cardNo}
+            </if>
+        </where>
+    </sql>
+
+    <select id="BosSettleLs_findCountByWhere" resultType="int">
+        SELECT count(*) FROM BOS_SETTLE_LS T
+        <include refid="BosSettleLs_findPage_where"/>
+    </select>
+
+
+    <select id="BosSettleLs_findListByWhere" resultMap="BosSettleLs">
+        SELECT
+        <include refid="BosSettleLs_columns"/>
+        FROM BOS_SETTLE_LS T
+        <include refid="BosSettleLs_findPage_where"/>
+    </select>
+
+</mapper>
+

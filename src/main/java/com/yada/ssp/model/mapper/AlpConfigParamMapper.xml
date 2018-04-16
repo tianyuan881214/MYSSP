@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+        "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+
+
+<mapper namespace="com.yada.ssp.dao.AlpConfigParamDao">
+
+    <resultMap id="AlpConfigParam" type="com.yada.ssp.model.AlpConfigParam">
+        <result property="pid" column="PID"/>
+        <result property="appId" column="APP_ID"/>
+        <result property="openApiDomain" column="OPEN_API_DOMAIN"/>
+        <result property="mcloudApiDomain" column="MCLOUD_API_DOMAIN"/>
+        <result property="callBackIpPort" column="CALLBACK_URL"/>
+        <result property="privateKey" column="PRIVATE_KEY"/>
+        <result property="publicKey" column="PUBLIC_KEY"/>
+        <result property="alpPublicKey" column="ALIPAY_PUBLIC_KEY"/>
+    </resultMap>
+
+    <update id="AlpConfigParam_update" parameterType="com.yada.ssp.model.AlpConfigParam">
+        <![CDATA[
+        UPDATE PAY_CONFIG SET
+	    PID = #{pid},
+        APP_ID=#{appId},
+        OPEN_API_DOMAIN=#{openApiDomain},
+        MCLOUD_API_DOMAIN=#{mcloudApiDomain},
+        CALLBACK_URL=#{callBackIpPort},
+        PRIVATE_KEY=#{privateKey},
+        PUBLIC_KEY=#{publicKey},
+        ALIPAY_PUBLIC_KEY=#{alpPublicKey}
+        ]]>
+    </update>
+
+    <select id="AlpConfigParam_findAll" resultMap="AlpConfigParam">
+        SELECT
+        PID,APP_ID,OPEN_API_DOMAIN,MCLOUD_API_DOMAIN,CALLBACK_URL,PRIVATE_KEY,PUBLIC_KEY,ALIPAY_PUBLIC_KEY
+        FROM PAY_CONFIG
+    </select>
+
+</mapper>
+

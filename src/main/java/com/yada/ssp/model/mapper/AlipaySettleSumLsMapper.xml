@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+        "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+
+
+<mapper namespace="com.yada.ssp.dao.AlipaySettleSumLsDao">
+
+    <resultMap id="AlipaySettleSumLs" type="com.yada.ssp.model.AlipaySettleSumLs">
+        <result property="businessBase" column="businessBase"/>
+        <result property="storeId" column="STORE_ID"/>
+        <result property="storeName" column="STORE_NAME"/>
+        <result property="orderSumAmt" column="ORDER_SUM_AMT"/>
+        <result property="merchantSettleAmt" column="MERCHANT_SETTLE_AMT"/>
+        <result property="serviceAmt" column="SERVICE_AMT"/>
+        <result property="netAmount" column="NET_AMOUNT"/>
+        <result property="settleDate" column="SETTLE_DATE"/>
+        <result property="merchantId" column="MERCHANT_ID"/>
+        <result property="orgId" column="ORG_ID"/>
+        <result property="pOrgId" column="P_ORG_ID"/>
+        <result property="inOrg" column="inOrg"/>
+    </resultMap>
+
+
+    <sql id="AlipaySettleSumLs_columns">
+        T.businessBase,
+        T.MERCHANT_ID as STORE_ID,
+        T.MERCHANT_CNAME as STORE_NAME,
+        T.ORDER_SUM_AMT,
+        T.MERCHANT_SETTLE_AMT,
+        T.SERVICE_AMT,
+        T.NET_AMOUNT,
+        T.SETTLE_DATE,
+        T.NAME as inOrg
+    </sql>
+
+
+
+    <select id="AlipaySettleSumLs_getById" resultMap="AlipaySettleSumLs">
+        SELECT
+        <include refid="AlipaySettleSumLs_columns"/>
+        from (
+        select T.*, o.name from (
+        SELECT '000000000000002' as businessBase,
+        mb.merchant_id,
+        mb.merchant_cname,
+        al.settle_date,
+        al.store_id,
+        to_char(al.order_sum_amt,'999999999990.99') as order_sum_amt,
+        to_char(al.merchant_settle_amt,'999999999990.99') as merchant_settle_amt,
+        to_char(al.service_amt,'999999999990.99') as service_amt,
+        to_char(al.net_amount ,'999999999990.99')as net_amount
+        from ALIPAY_SETTLE_SUM_LS al
+        left join alipay_merchant_base ab on al.STORE_ID = ab.sub_merchant_id
+        left join merchant_base mb on ab.merchant_id = mb.merchant_id
+        union all
+        SELECT '000000000000003' as businessBase ,mb.merchant_id,mb.merchant_cname,we.* from (
+        select to_char(to_date(t.TRAN_TIME,'yyyy-mm-dd hh24:mi:ss'),'yyyymmdd') as SETTLE_DATE,
+        t.sub_merchant_id as STORE_ID,
+        to_char(sum(t.total_amount),'999999999990.99') as ORDER_SUM_AMT,
+        to_char(sum(t.total_amount)-sum(t.returnd_amt),'999999999990.99') as MERCHANT_SETTLE_AMT,
+        to_char(sum(t.fee),'999999999990.99') as SERVICE_AMT,
+        to_char(sum(t.total_amount)-sum(t.returnd_amt)-sum(t.fee),'999999999990.99') as NET_AMOUNT
+        from WEBCHAT_SETTLE_LS t
+        group by to_char(to_date(t.TRAN_TIME,'yyyy-mm-dd hh24:mi:ss'),'yyyymmdd'), t.sub_merchant_id) WE
+        left join webchant_merchant_base wb on we.STORE_ID = wb.sub_mch_id
+        left join merchant_base mb on wb.merchant_id = mb.merchant_id ) T
+        left join MERCHANT_BASE B ON T.MERCHANT_ID=B.MERCHANT_ID
+        JOIN T_B_ORG O ON B.ZBANK=O.ORG_ID
+        )T
+        WHERE
+        T.STORE_ID = #{storeId}
+    </select>
+
+    <sql id="AlipaySettleSumLs_findPage_where">
+
+        <where>
+            <if test="businessBase != null and businessBase !=''">
+                AND T.businessBase=#{businessBase}
+            </if>
+            <if test="storeId != null and storeId !=''">
+                AND T.MERCHANT_ID=#{storeId}
+            </if>
+            <if test="settleDateTimeBegin != null and settleDateTimeBegin !=''">
+                AND T.SETTLE_DATE &gt;= #{settleDateTimeBegin}
+            </if>
+            <if test="settleDateTimeEnd != null and settleDateTimeEnd !=''">
+                AND T.SETTLE_DATE &lt;= #{settleDateTimeEnd}
+            </if>
+
+        </where>
+    </sql>
+
+    <select id="AlipaySettleSumLs_findCountByWhere" resultType="int">
+        select count(*)  FROM  (
+        select T.*, o.name from (
+        SELECT '000000000000002' as businessBase,
+        mb.merchant_id,
+        mb.merchant_cname,
+        al.settle_date,
+        al.store_id,
+        to_char(al.order_sum_amt,'999999999990.99') as order_sum_amt,
+        to_char(al.merchant_settle_amt,'999999999990.99') as merchant_settle_amt,
+        to_char(al.service_amt,'999999999990.99') as service_amt,
+        to_char(al.net_amount ,'999999999990.99')as net_amount
+        from ALIPAY_SETTLE_SUM_LS al
+        left join alipay_merchant_base ab on al.STORE_ID = ab.sub_merchant_id
+        left join merchant_base mb on ab.merchant_id = mb.merchant_id
+        union all
+        SELECT '000000000000003' as businessBase ,mb.merchant_id,mb.merchant_cname,we.* from (
+        select to_char(to_date(t.TRAN_TIME,'yyyy-mm-dd hh24:mi:ss'),'yyyymmdd') as SETTLE_DATE,
+        t.sub_merchant_id as STORE_ID,
+        to_char(sum(t.total_amount),'999999999990.99') as ORDER_SUM_AMT,
+        to_char(sum(t.total_amount)-sum(t.returnd_amt),'999999999990.99') as MERCHANT_SETTLE_AMT,
+        to_char(sum(t.fee),'999999999990.99') as SERVICE_AMT,
+        to_char(sum(t.total_amount)-sum(t.returnd_amt)-sum(t.fee),'999999999990.99') as NET_AMOUNT
+        from WEBCHAT_SETTLE_LS t
+        group by to_char(to_date(t.TRAN_TIME,'yyyy-mm-dd hh24:mi:ss'),'yyyymmdd'), t.sub_merchant_id) WE
+        left join webchant_merchant_base wb on we.STORE_ID = wb.sub_mch_id
+        left join merchant_base mb on wb.merchant_id = mb.merchant_id ) T
+        left join  MERCHANT_BASE B ON T.MERCHANT_ID=B.MERCHANT_ID
+        JOIN T_B_ORG O ON B.ZBANK=O.ORG_ID
+        where o.ORG_ID in (select o.org_id from t_b_org o start with o.org_id=#{orgId} connect by o.p_org_id=prior o.org_id)
+
+        )T
+        <include refid="AlipaySettleSumLs_findPage_where"/>
+    </select>
+
+
+    <select id="AlipaySettleSumLs_findListByWhere" resultMap="AlipaySettleSumLs">
+        SELECT
+        <include refid="AlipaySettleSumLs_columns"/>
+        FROM  (
+        select T.*, o.name from (
+        SELECT '000000000000002' as businessBase,
+        mb.merchant_id,
+        mb.merchant_cname,
+        al.settle_date,
+        al.store_id,
+        to_char(al.order_sum_amt,'999999999990.99') as order_sum_amt,
+        to_char(al.merchant_settle_amt,'999999999990.99') as merchant_settle_amt,
+        to_char(al.service_amt,'999999999990.99') as service_amt,
+        to_char(al.net_amount ,'999999999990.99')as net_amount
+        from ALIPAY_SETTLE_SUM_LS al
+        left join alipay_merchant_base ab on al.STORE_ID = ab.sub_merchant_id
+        left join merchant_base mb on ab.merchant_id = mb.merchant_id
+        union all
+        SELECT '000000000000003' as businessBase ,mb.merchant_id,mb.merchant_cname,we.* from (
+        select to_char(to_date(t.TRAN_TIME,'yyyy-mm-dd hh24:mi:ss'),'yyyymmdd') as SETTLE_DATE,
+        t.sub_merchant_id as STORE_ID,
+        to_char(sum(t.total_amount),'999999999990.99') as ORDER_SUM_AMT,
+        to_char(sum(t.total_amount)-sum(t.returnd_amt),'999999999990.99') as MERCHANT_SETTLE_AMT,
+        to_char(sum(t.fee),'999999999990.99') as SERVICE_AMT,
+        to_char(sum(t.total_amount)-sum(t.returnd_amt)-sum(t.fee),'999999999990.99') as NET_AMOUNT
+        from WEBCHAT_SETTLE_LS t
+        group by to_char(to_date(t.TRAN_TIME,'yyyy-mm-dd hh24:mi:ss'),'yyyymmdd'), t.sub_merchant_id) WE
+        left join webchant_merchant_base wb on we.STORE_ID = wb.sub_mch_id
+        left join merchant_base mb on wb.merchant_id = mb.merchant_id ) T
+        left join  MERCHANT_BASE B ON T.MERCHANT_ID=B.MERCHANT_ID
+        JOIN T_B_ORG O ON B.ZBANK=O.ORG_ID
+        where o.ORG_ID in (select o.org_id from t_b_org o start with o.org_id=#{orgId} connect by o.p_org_id=prior o.org_id)
+
+        )T
+        <include refid="AlipaySettleSumLs_findPage_where"/>
+    </select>
+
+    <select id="AlipaySettleSumLs_findAll" resultMap="AlipaySettleSumLs">
+        SELECT
+        <include refid="AlipaySettleSumLs_columns"/>
+        from (
+        select T.*, o.name from (
+        SELECT '000000000000002' as businessBase,
+        mb.merchant_id,
+        mb.merchant_cname,
+        al.settle_date,
+        al.store_id,
+        to_char(al.order_sum_amt,'999999999990.99') as order_sum_amt,
+        to_char(al.merchant_settle_amt,'999999999990.99') as merchant_settle_amt,
+        to_char(al.service_amt,'999999999990.99') as service_amt,
+        to_char(al.net_amount ,'999999999990.99')as net_amount
+        from ALIPAY_SETTLE_SUM_LS al
+        left join alipay_merchant_base ab on al.STORE_ID = ab.sub_merchant_id
+        left join merchant_base mb on ab.merchant_id = mb.merchant_id
+        union all
+        SELECT '000000000000003' as businessBase ,mb.merchant_id,mb.merchant_cname,we.* from (
+        select to_char(to_date(t.TRAN_TIME,'yyyy-mm-dd hh24:mi:ss'),'yyyymmdd') as SETTLE_DATE,
+        t.sub_merchant_id as STORE_ID,
+        to_char(sum(t.total_amount),'999999999990.99') as ORDER_SUM_AMT,
+        to_char(sum(t.total_amount)-sum(t.returnd_amt),'999999999990.99') as MERCHANT_SETTLE_AMT,
+        to_char(sum(t.fee),'999999999990.99') as SERVICE_AMT,
+        to_char(sum(t.total_amount)-sum(t.returnd_amt)-sum(t.fee),'999999999990.99') as NET_AMOUNT
+        from WEBCHAT_SETTLE_LS t
+        group by to_char(to_date(t.TRAN_TIME,'yyyy-mm-dd hh24:mi:ss'),'yyyymmdd'), t.sub_merchant_id) WE
+        left join webchant_merchant_base wb on we.STORE_ID = wb.sub_mch_id
+        left join merchant_base mb on wb.merchant_id = mb.merchant_id ) T
+        left join  MERCHANT_BASE B ON T.MERCHANT_ID=B.MERCHANT_ID
+        JOIN T_B_ORG O ON B.ZBANK=O.ORG_ID
+        where o.ORG_ID in (select o.org_id from t_b_org o start with o.org_id=#{orgId} connect by o.p_org_id=prior o.org_id)
+
+        )T
+        <include refid="AlipaySettleSumLs_findPage_where"/>
+    </select>
+
+</mapper>
+

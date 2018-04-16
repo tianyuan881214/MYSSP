@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+        "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+
+
+<mapper namespace="com.yada.ssp.dao.TranSummerDao">
+    <resultMap id="TranSummer" type="com.yada.ssp.model.TranSummer">
+        <result property="id" column="ID"/>
+        <result property="source" column="SOURCES"/>
+        <result property="merchantId" column="MERCHANT_ID"/>
+        <result property="date" column="TRAN_DATE"/>
+        <result property="sumConsume" column="SUM_CONSUME"/>
+        <result property="sumConsumeAmt" column="SUM_CONSUME_AMT"/>
+        <result property="sumRefund" column="SUM_REFUND"/>
+        <result property="sumRefundAmt" column="SUM_REFUND_AMT"/>
+        <result property="sumAmt" column="SUM_AMT"/>
+        <result property="sumUndo" column="SUM_UNDO"/>
+        <result property="sumUndoAmt" column="SUM_UNDO_AMT"/>
+        <result property="name" column="NAME"/>
+        <result property="businessName" column="BUSINESS_NAME"/>
+        <result property="merchantCname" column="MERCHANT_CNAME"/>
+    </resultMap>
+
+
+    <sql id="TranSummer_columns">
+        T.ID,
+        T.SOURCES,
+        T.MERCHANT_ID,
+        T.MERCHANT_CNAME,
+        T.TRAN_DATE,
+        T.SUM_CONSUME,
+        T.SUM_CONSUME_AMT,
+        T.SUM_REFUND,
+        T.SUM_REFUND_AMT,
+        T.SUM_AMT,
+        T.SUM_UNDO,
+        T.SUM_UNDO_AMT,
+        T.NAME
+    </sql>
+
+
+
+    <select id="TranSummer_getById" resultMap="TranSummer">
+        SELECT
+        <include refid="TranSummer_columns"/>
+        FROM TRAN_SUMMER T
+        WHERE
+        T.ID = #{id}
+    </select>
+
+    <sql id="TranSummer_findPage_where">
+
+        <where>
+            <if test="source != null and source !=''">
+                AND T.SOURCES=#{source}
+            </if>
+            <if test="merchantId != null and merchantId !=''">
+                AND T.MERCHANT_ID=#{merchantId}
+            </if>
+            <if test="tranDateTimeBegin != null and tranDateTimeBegin !=''">
+                AND T.TRAN_DATE &gt;= #{tranDateTimeBegin}
+            </if>
+            <if test="tranDateTimeEnd != null and tranDateTimeEnd !=''">
+                AND T.TRAN_DATE &lt;= #{tranDateTimeEnd}
+            </if>
+
+        </where>
+    </sql>
+
+    <select id="TranSummer_findCountByWhere" resultType="int">
+        SELECT count(*) FROM
+        (select T.*, O.*, M.MERCHANT_CNAME
+        from TRAN_SUMMER T
+        JOIN MERCHANT_BASE M
+        ON T.MERCHANT_ID = M.MERCHANT_ID
+        JOIN T_B_ORG O
+        ON M.ZBANK = O.ORG_ID
+        JOIN business_base b
+        on t.SOURCES = b.business_id
+        where o.ORG_ID in
+        (select o.org_id
+        from t_b_org o
+        start with o.org_id = #{orgId}
+        connect by o.p_org_id = prior o.org_id)
+        ) T
+        <include refid="TranSummer_findPage_where"/>
+    </select>
+
+
+    <select id="TranSummer_findListByWhere" resultMap="TranSummer">
+        SELECT
+        <include refid="TranSummer_columns"/>
+        FROM
+        (select T.*, O.*, M.MERCHANT_CNAME
+        from TRAN_SUMMER T
+        JOIN MERCHANT_BASE M
+        ON T.MERCHANT_ID = M.MERCHANT_ID
+        JOIN T_B_ORG O
+        ON M.ZBANK = O.ORG_ID
+        JOIN business_base b
+        on t.SOURCES = b.business_id
+        where o.ORG_ID in
+        (select o.org_id
+        from t_b_org o
+        start with o.org_id = #{orgId}
+        connect by o.p_org_id = prior o.org_id)
+        ) T
+        <include refid="TranSummer_findPage_where"/>
+    </select>
+
+    <select id="TranSummer_findAll" resultMap="TranSummer">
+        SELECT
+        <include refid="TranSummer_columns"/>
+        FROM
+        (select T.*, O.*, M.MERCHANT_CNAME
+        from TRAN_SUMMER T
+        JOIN MERCHANT_BASE M
+        ON T.MERCHANT_ID = M.MERCHANT_ID
+        JOIN T_B_ORG O
+        ON M.ZBANK = O.ORG_ID
+        JOIN business_base b
+        on t.SOURCES = b.business_id
+        where o.ORG_ID in
+        (select o.org_id
+        from t_b_org o
+        start with o.org_id = #{orgId}
+        connect by o.p_org_id = prior o.org_id)
+        ) T
+        <include refid="TranSummer_findPage_where"/>
+    </select>
+
+</mapper>
+

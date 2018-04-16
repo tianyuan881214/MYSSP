@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+"http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+
+<mapper namespace="com.yada.ssp.dao.CurTranLsDao">
+
+	<resultMap id="CurTranLs" type="com.yada.ssp.model.CurTranLs">
+        <result property="lsId" column="LS_ID"/>
+        <result property="msgId" column="MSG_ID"/>
+        <result property="procCode" column="PROC_CODE"/>
+        <result property="cardNo" column="CARD_NO"/>
+        <result property="expDate" column="EXP_DATE"/>
+        <result property="tranType" column="TRAN_TYPE"/>
+        <result property="voidTranType" column="VOID_TRAN_TYPE"/>
+        <result property="voidOldTranType" column="VOID_OLD_TRAN_TYPE"/>
+        <result property="inDate" column="IN_DATE"/>
+        <result property="inTime" column="IN_TIME"/>
+        <result property="outDate" column="OUT_DATE"/>
+        <result property="outTime" column="OUT_TIME"/>
+        <result property="localSysDate" column="LOCAL_SYS_DATE"/>
+        <result property="localSysTime" column="LOCAL_SYS_TIME"/>
+        <result property="hostLogicDate" column="HOST_LOGIC_DATE"/>
+        <result property="tranAmt" column="TRAN_AMT"/>
+        <result property="voidAmt" column="VOID_AMT"/>
+        <result property="settleAmt" column="SETTLE_AMT"/>
+        <result property="billingAmt" column="BILLING_AMT"/>
+        <result property="adjustAmt" column="ADJUST_AMT"/>
+        <result property="settleRate" column="SETTLE_RATE"/>
+        <result property="billingRate" column="BILLING_RATE"/>
+        <result property="settleDate" column="SETTLE_DATE"/>
+        <result property="conversionRate" column="CONVERSION_RATE"/>
+        <result property="ccyCode" column="CCY_CODE"/>
+        <result property="billingCcyCode" column="BILLING_CCY_CODE"/>
+        <result property="tip" column="TIP"/>
+        <result property="fee" column="FEE"/>
+        <result property="acqInstId" column="ACQ_INST_ID"/>
+        <result property="forwardInstId" column="FORWARD_INST_ID"/>
+        <result property="terminalId" column="TERMINAL_ID"/>
+        <result property="merchantId" column="MERCHANT_ID"/>
+        <result property="merchantName" column="MERCHANT_NAME"/>
+        <result property="mcc" column="MCC"/>
+        <result property="traceNo" column="TRACE_NO"/>
+        <result property="voidTraceNo" column="VOID_TRACE_NO"/>
+        <result property="tranRrn" column="TRAN_RRN"/>
+        <result property="voidTranRrn" column="VOID_TRAN_RRN"/>
+        <result property="hostLsNo" column="HOST_LS_NO"/>
+        <result property="voidHostLsNo" column="VOID_HOST_LS_NO"/>
+        <result property="invoiceNo" column="INVOICE_NO"/>
+        <result property="voidInvoiceNo" column="VOID_INVOICE_NO"/>
+        <result property="batchNo" column="BATCH_NO"/>
+        <result property="bankType" column="BANK_TYPE"/>
+        <result property="cardType" column="CARD_TYPE"/>
+        <result property="conditionCode" column="CONDITION_CODE"/>
+        <result property="acqBankId" column="ACQ_BANK_ID"/>
+        <result property="acqHostId" column="ACQ_HOST_ID"/>
+        <result property="authNo" column="AUTH_NO"/>
+        <result property="respCode" column="RESP_CODE"/>
+        <result property="respBankId" column="RESP_BANK_ID"/>
+        <result property="respHostId" column="RESP_HOST_ID"/>
+        <result property="operNo" column="OPER_NO"/>
+        <result property="localSettleDate" column="LOCAL_SETTLE_DATE"/>
+        <result property="localSettleFlag" column="LOCAL_SETTLE_FLAG"/>
+        <result property="transAcctNo" column="TRANS_ACCT_NO"/>
+        <result property="transExpDate" column="TRANS_EXP_DATE"/>
+        <result property="transAcctType" column="TRANS_ACCT_TYPE"/>
+        <result property="tranFlag" column="TRAN_FLAG"/>
+        <result property="advFlag" column="ADV_FLAG"/>
+        <result property="offlineFlag" column="OFFLINE_FLAG"/>
+        <result property="safFlag" column="SAF_FLAG"/>
+        <result property="inputMode" column="INPUT_MODE"/>
+        <result property="addData" column="ADD_DATA"/>
+        <result property="tranId" column="TRAN_ID"/>
+        <result property="channelId" column="CHANNEL_ID"/>
+        <result property="keepTime" column="KEEP_TIME"/>
+        <result property="sendCnt" column="SEND_CNT"/>
+        <result property="cardName" column="CARD_NAME"/>
+        <result property="serviceCode" column="SERVICE_CODE"/>
+        <result property="arpc91" column="ARPC_91"/>
+	</resultMap>
+	
+	
+	<sql id="CurTranLs_columns">
+		T.LS_ID,T.MSG_ID,T.PROC_CODE,T.CARD_NO,T.EXP_DATE,T.TRAN_TYPE,T.VOID_TRAN_TYPE,T.VOID_OLD_TRAN_TYPE,T.IN_DATE,T.IN_TIME,T.OUT_DATE,
+		T.OUT_TIME,T.LOCAL_SYS_DATE,T.LOCAL_SYS_TIME,T.HOST_LOGIC_DATE,T.TRAN_AMT,T.VOID_AMT,T.SETTLE_AMT,T.BILLING_AMT,T.ADJUST_AMT,T.SETTLE_RATE,T.BILLING_RATE,
+		T.SETTLE_DATE,T.CONVERSION_RATE,T.CCY_CODE,T.BILLING_CCY_CODE,T.TIP,T.FEE,T.ACQ_INST_ID,T.FORWARD_INST_ID,T.TERMINAL_ID,T.MERCHANT_ID,
+		T.MERCHANT_NAME,T.MCC,T.TRACE_NO,T.VOID_TRACE_NO,T.TRAN_RRN,T.VOID_TRAN_RRN,T.HOST_LS_NO,T.VOID_HOST_LS_NO,T.INVOICE_NO,T.VOID_INVOICE_NO,
+		T.BATCH_NO,T.BANK_TYPE,T.CARD_TYPE,T.CONDITION_CODE,T.ACQ_BANK_ID,T.ACQ_HOST_ID,T.AUTH_NO,T.RESP_CODE,T.RESP_BANK_ID,T.RESP_HOST_ID,
+		T.OPER_NO,T.LOCAL_SETTLE_DATE,T.LOCAL_SETTLE_FLAG,T.TRANS_ACCT_NO,T.TRANS_EXP_DATE,T.TRANS_ACCT_TYPE,T.TRAN_FLAG,T.ADV_FLAG,T.OFFLINE_FLAG,
+		T.SAF_FLAG,T.INPUT_MODE,T.ADD_DATA,T.TRAN_ID,T.CHANNEL_ID,T.KEEP_TIME,T.SEND_CNT,T.CARD_NAME
+	</sql>
+
+    <select id="CurTranLs_getById" resultMap="CurTranLs">
+		SELECT <include refid="CurTranLs_columns" />
+		    FROM CUR_TRAN_LS T
+	        WHERE 
+		        T.LS_ID = #{lsId} 
+	</select>
+	
+	<sql id="CurTranLs_findPage_where">
+		
+		<where>
+            <if test="merchantName!=null and merchantName!=''">
+                AND T.MERCHANT_NAME LIKE '%'||#{merchantName}||'%'
+            </if>
+            <if test="cardNo!=null and cardNo!=''">
+                AND T.CARD_NO = #{cardNo}
+            </if>
+            <if test="localSysDateTimeBegin!=null and localSysDateTimeBegin!=''">
+                AND T.LOCAL_SYS_DATE &gt;=#{localSysDateTimeBegin}
+            </if>
+            <if test="localSysDateTimeEnd!=null and localSysDateTimeEnd!=''">
+                AND T.LOCAL_SYS_DATE &lt;= #{localSysDateTimeEnd}
+            </if>
+            <if test="localSysDate!=null and localSysDate!=''">
+                AND T.LOCAL_SYS_DATE = #{localSysDate}
+            </if>
+            <if test="merchantId!=null and merchantId!=''">
+                AND T.MERCHANT_ID = #{merchantId}
+            </if>
+		</where>
+	</sql>
+		
+    <select id="CurTranLs_findCountByWhere" resultType="int">
+        SELECT count(*) FROM (
+        SELECT * FROM CUR_TRAN_LS T
+        <include refid="CurTranLs_findPage_where"/>
+        AND (T.MSG_ID='0200' AND T.PROC_CODE='000000') OR (T.MSG_ID='0200' AND T.PROC_CODE='200000') OR (T.MSG_ID='0220' AND T.PROC_CODE='270000')
+        UNION ALL
+        SELECT * FROM HIS_TRAN_LS T
+        <include refid="CurTranLs_findPage_where"/>
+        AND (T.MSG_ID='0200' AND T.PROC_CODE='000000') OR (T.MSG_ID='0200' AND T.PROC_CODE='200000') OR (T.MSG_ID='0220' AND T.PROC_CODE='270000')
+        )
+
+    </select>
+    
+    <select id="CurTranLs_findListByWhere" resultMap="CurTranLs">
+    	SELECT <include refid="CurTranLs_columns" />
+	    FROM CUR_TRAN_LS T
+		<include refid="CurTranLs_findPage_where"/>
+        AND (T.MSG_ID='0200' AND T.PROC_CODE='000000') OR (T.MSG_ID='0200' AND T.PROC_CODE='200000') OR (T.MSG_ID='0220' AND T.PROC_CODE='270000')
+        UNION ALL
+        SELECT <include refid="CurTranLs_columns" /> FROM HIS_TRAN_LS T
+        <include refid="CurTranLs_findPage_where"/>
+        AND (T.MSG_ID='0200' AND T.PROC_CODE='000000') OR (T.MSG_ID='0200' AND T.PROC_CODE='200000') OR (T.MSG_ID='0220' AND T.PROC_CODE='270000')
+    </select>
+
+	
+</mapper>
+
